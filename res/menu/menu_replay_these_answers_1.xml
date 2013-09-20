@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/play_again"
+        android:showAsAction="always"
+        android:title="play again"/>
+    
+     <item
+        android:id="@+id/replay_these_answers_1"
+        android:showAsAction="always"
+        android:title="replay these answers"/>
+       <item
+        android:id="@+id/return_to_opening"
+        android:showAsAction="always"
+        android:title="return to opening"/>
+
+</menu>

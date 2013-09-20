@@ -1,0 +1,6 @@
+digraph G1 {
+  concentrate = true;
+  BaseActivity -> Bus;
+  BaseFragment -> Bus;
+  BaseManager -> Bus;
+}

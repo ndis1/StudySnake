@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_snake_layout"
+        android:showAsAction="always"
+        android:title="pause"/>
+    <item android:id="@+id/quit"
+        android:showAsAction="always"
+          android:title="quit"/>
+    <item android:id="@+id/different_quiz"
+        android:showAsAction="always"
+          android:title="different quiz"/>
+
+</menu>
