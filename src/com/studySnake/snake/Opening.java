@@ -112,7 +112,7 @@ public class Opening extends ListActivity {
 				    ArrayList<Question> value = entry.getValue();
 				    quizzes.add(new Quiz(value,key));
 				}
-				ArrayAdapter<Quiz> adapter = new ArrayAdapter<Quiz>(context,
+				ColoredArrayAdapter<Quiz> adapter = new ColoredArrayAdapter<Quiz>(context,
 				        android.R.layout.simple_list_item_1, quizzes);
 		        setListAdapter(adapter);
 			}
