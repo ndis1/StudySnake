@@ -17,7 +17,6 @@
         android:icon="@drawable/badsnakepic"
         android:name="com.studySnake.snake.BaseApplication"
         >
-        
           <activity
                 android:name="com.studySnake.snake.StartupActivity"
                 android:windowSoftInputMode="adjustResize|stateVisible" 

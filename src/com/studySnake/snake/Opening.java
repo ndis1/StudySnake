@@ -33,9 +33,7 @@ public class Opening extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()){
-	    
-	    //
-	        case R.id.menu_logout:
+	    	case R.id.menu_logout:
 	        	parseLogout();
 	        	return true;
 	        default:
@@ -46,7 +44,6 @@ public class Opening extends Activity {
     	ParseUser.logOut();
     	Intent i = new Intent(context,Login.class);
     	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
         startActivity(i);
         this.finish();
     }
@@ -76,7 +73,7 @@ public class Opening extends Activity {
 				quizesFound.add(p1.getString("title"));
 				dynButtons.get(0).setMinimumHeight(150);
 				dynButtons.get(0).setMinimumWidth(150);
-		        RelativeLayout rl = (RelativeLayout) findViewById(R.id.Button22);
+		        RelativeLayout rl = (RelativeLayout) findViewById(R.id.generic_button);
 		        rl.addView(dynButtons.get(0)); 
 		        dynButtons.get(0).setOnClickListener(new View.OnClickListener() {
 		            public void onClick(View v) {

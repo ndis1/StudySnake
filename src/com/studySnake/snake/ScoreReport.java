@@ -39,55 +39,33 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-/**
- * Snake: a simple game that everyone can enjoy.
- * 
- * This is an implementation of the classic Game "Snake", in which you control a
- * serpent roaming around the garden looking for apples. Be careful, though,
- * because when you catch one, not only will you become longer, but you'll move
- * faster. Running into yourself or the walls will end the game.
- * 
- */
 public class ScoreReport extends Activity {
 	private static final int SERIES_NR = 1;
 	private HashMap<Integer,ArrayList<String>> playerAnswersHashMap = new HashMap<Integer,ArrayList<String>>();
 	private HashMap<Integer,ArrayList<String>> queryHashMap = new HashMap<Integer,ArrayList<String>>();
 
-	private int whichActionBar = 0;
 
     private ArrayList<String> questions;
-    private static String ICICLE_KEY = "snake-view";
-    private int score;
     private Context context;
-    private ListView questionDisp;
     private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
     
     /** The main renderer that includes all the renderers customizing a chart. */
     private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
     /** The most recently added series. */
-    private XYSeries mCurrentSeries;
-    /** The most recently created renderer, customizing the current series. */
-    private XYSeriesRenderer mCurrentRenderer;
-    /** Button for creating a new series of data. */
-    private Button mNewSeries;
-    /** Button for adding entered data to the current series. */
-    private Button mAdd;
-    /** Edit text field for entering the X value of the data to be added. */
-    private EditText mX;
-    /** Edit text field for entering the Y value of the data to be added. */
-    private EditText mY;
-    /** The chart view that displays the data. */
+   
     private RelativeLayout back_dim_layout;
     private GraphicalView mChartView;
     private LinearLayout layout3;
     private ResultsFragment searchRadiusQuery;
-    private RelativeLayout vgg;
     private  Intent intentCallFromSnake;
     private String reportString = "starting content";
-    /**
-     * Called w0hen Activity is first created. Turns off the title bar, sets up
-     * the content views, and fires up the SnakeView.
-     */
+    private static final int ALL = 0;
+    private static final int FIRST_TRY = 1;
+    private static final int SECOND_TRY = 2;
+    private static final int THIRD_TRY = 3;
+    private static final int FOURTH_TRY = 4;
+	private int whichTry = ALL;
+
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
@@ -166,8 +144,8 @@ public class ScoreReport extends Activity {
         String quizUsed = intentCallFromSnake.getStringExtra("whichQuiz");
     	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        i.putExtra("whichQuiz", filterQuestions(quizUsed, whichActionBar));
-        if(filterQuestions(quizUsed, whichActionBar).contains("nxn")){
+        i.putExtra("whichQuiz", filterQuestions(quizUsed, whichTry));
+        if(filterQuestions(quizUsed, whichTry).contains("nxn")){
         	startActivity(i);
         }else{
         	Toast.makeText(
@@ -180,18 +158,20 @@ public class ScoreReport extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        if(whichActionBar == 0){
-        getMenuInflater().inflate(R.menu.menu_score_rep_layout, menu);
-        }else if(whichActionBar ==1){
-            getMenuInflater().inflate(R.menu.menu_replay_these_answers_1, menu);
-        }else if(whichActionBar ==2){
-            getMenuInflater().inflate(R.menu.menu_replay_these_answers_2, menu);
-        }else if(whichActionBar ==3){
-            getMenuInflater().inflate(R.menu.menu_replay_these_answers_3, menu);
-        }else if(whichActionBar ==4){
-            getMenuInflater().inflate(R.menu.menu_replay_these_answers_4, menu);
-        }
-        
+        switch(whichTry){
+	        case ALL : getMenuInflater().inflate(R.menu.menu_score_rep_layout, menu);
+	        break;
+	        case FIRST_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers_1, menu);
+	        break;
+
+	        case SECOND_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers_2, menu);
+	        break;
+
+	        case THIRD_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers_3, menu);
+	        break;
+
+	        case FOURTH_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers_4, menu);
+        }      
         return true;
     }
     @Override
@@ -201,19 +181,15 @@ public class ScoreReport extends Activity {
 //
         setContentView(R.layout.score_report_layout);
         back_dim_layout = (RelativeLayout) findViewById(R.id.bac_dim_layout);
-        vgg = (RelativeLayout) findViewById(R.id.vg);
          intentCallFromSnake = getIntent();
         questions = intentCallFromSnake.getExtras().getStringArrayList("questionsAsString");
         playerAnswersHashMap = (HashMap<Integer, ArrayList<String>>) intentCallFromSnake.getSerializableExtra("playerAnswers");
-        queryHashMap = (HashMap<Integer, ArrayList<String>>) intentCallFromSnake.getSerializableExtra("queryMap");
-
-        score = intentCallFromSnake.getExtras().getInt("finalScore");
-        
+        queryHashMap = (HashMap<Integer, ArrayList<String>>) intentCallFromSnake.getSerializableExtra("queryMap");       
        
         if (mChartView == null) {
              layout3 = (LinearLayout) findViewById(R.id.chart);
-            mRenderer = getTruitonBarRenderer();
-            mDataset = getTruitonBarDataset();
+            mRenderer = getBarRenderer();
+            mDataset = getBarDataset();
             mChartView = ChartFactory.getBarChartView(this, mDataset, mRenderer, Type.DEFAULT);
             // enable the chart click event
             mRenderer.setClickEnabled(true);
@@ -247,15 +223,15 @@ public class ScoreReport extends Activity {
         
     }
     public void setReplayMenu(int which){
-    	whichActionBar = which;
+    	whichTry = which;
     	this.invalidateOptionsMenu();
     }
     public void bdlsvis(){
   	  getFragmentManager().beginTransaction().remove(searchRadiusQuery).commit();
-  	  whichActionBar = 0;
+  	  whichTry = ALL;
   	  this.invalidateOptionsMenu();
     }
-    private XYMultipleSeriesDataset getTruitonBarDataset() {
+    private XYMultipleSeriesDataset getBarDataset() {
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
         final int nr = 4;
         ArrayList<String> legendTitles = new ArrayList<String>();
@@ -273,7 +249,7 @@ public class ScoreReport extends Activity {
         }
         return dataset;
     }
-    public XYMultipleSeriesRenderer getTruitonBarRenderer() {
+    public XYMultipleSeriesRenderer getBarRenderer() {
     	 int[] colors = new int[] { Color.parseColor("#0066FF")};        
          XYMultipleSeriesRenderer renderer = buildBarRenderer(colors);
 		myChartSettings(renderer);
@@ -298,7 +274,6 @@ public class ScoreReport extends Activity {
 	    renderer.setGridColor(Color.GRAY);
 	    renderer.setZoomEnabled(false, false);
 	    renderer.setPanEnabled(false, false);
-
 	    renderer.setXLabels(0); // sets the number of integer labels to appear
 	}
 	
@@ -332,13 +307,11 @@ public class ScoreReport extends Activity {
 		return out;
 	}
 	public String filterQuestions(String filename, int which){
-    	ArrayList<Question> thisList = new ArrayList<Question>();
     	String nstring = "";
 		String [] n = filename.split(" nxn ");
 		for(String nextLine: n){
 			if(nextLine.contains(" , ")){
 	           String [] bits=  nextLine.split(" , ");
-	           String question = bits[0];
 	           ArrayList<String> answers = new ArrayList<String>();
 	           String a1 = bits[1];
 	           String a2 = bits[2];
@@ -349,9 +322,7 @@ public class ScoreReport extends Activity {
 	           answers.add(a3);
 	           answers.add(a4);
 	           String rightAnswer =bits[5];
-	           int id = Integer.parseInt(bits[6]);
-	           //temp fix - answers might be same for multi questions
-	           if(which==0){
+	           if(which == ALL){
 		           if(playerAnswersHashMap.containsKey(4)){
 			           if(!playerAnswersHashMap.get(4).contains(rightAnswer)){
 			        	   nstring = nstring +" nxn "+nextLine;
@@ -359,25 +330,25 @@ public class ScoreReport extends Activity {
 		           }else{
 		        	   nstring = nstring +" nxn "+nextLine;
 		           }
-	           }else if(which == 1){
+	           }else if(which == FIRST_TRY){
 	        	   if(playerAnswersHashMap.containsKey(4)){
 			           if(playerAnswersHashMap.get(4).contains(rightAnswer)){
 			        	   nstring = nstring +" nxn "+nextLine;
 			           }
 		           }
-	           }else if (which == 2){
+	           }else if (which == SECOND_TRY){
 	        	   if(playerAnswersHashMap.containsKey(3)){
 			           if(playerAnswersHashMap.get(3).contains(rightAnswer)){
 			        	   nstring = nstring +" nxn "+nextLine;
 			           }
 		           }
-	           }else if (which == 3){
+	           }else if (which == THIRD_TRY){
 	        	   if(playerAnswersHashMap.containsKey(2)){
 			           if(playerAnswersHashMap.get(2).contains(rightAnswer)){
 			        	   nstring = nstring +" nxn "+nextLine;
 			           }
 		           }
-	           }else if (which == 4){
+	           }else if (which == FOURTH_TRY){
 	        	   if(playerAnswersHashMap.containsKey(1)){
 			           if(playerAnswersHashMap.get(1).contains(rightAnswer)){
 			        	   nstring = nstring +" nxn "+nextLine;

@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2007 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package com.studySnake.snake;
 
@@ -40,11 +25,7 @@ import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-/**
- * SnakeView: implementation of a simple game of Snake
- * 
- * 
- */
+
 public class SnakeView extends TileView implements OnTouchListener{
 	private String whichQuiz;
 	private boolean resetApples;
@@ -52,7 +33,6 @@ public class SnakeView extends TileView implements OnTouchListener{
 	private HashMap<Integer,ArrayList<String>> playerAnswers = new HashMap<Integer,ArrayList<String>>();
 	private HashMap<Integer,ArrayList<String>> queryMap = new HashMap<Integer,ArrayList<String>>();
 
-	private Question StoQ;
     private static final String TAG = "SnakeView";
     private int whichRound=0;
     private String A;
@@ -244,52 +224,30 @@ public boolean onTopToBottomSwipe(){
     private void initNewGame() {
         mSnakeTrail.clear();
         mAppleList.clear();
-        boolean empty = true;
-        try{
-            Question thisQue = questions.get(whichRound );
-            empty = false;
-        }catch(Exception e){
-        	
-        }
-        if ( empty ){
-        	ArrayList<String> questionsAsStr = new ArrayList<String>();
-         	questionsAsStr.add("no questions");
-         	resetApples=true;
-         	Intent i = new Intent(this.getContext(),ScoreReport.class);
-             int imsc = (int)mScore;
-             i.putExtra("finalScore", imsc);
-             i.putExtra("whichQuiz", whichQuiz);
-             i.putExtra("playerAnswers", playerAnswers);
-             i.putExtra("queryMap", queryMap);
+        resetApples=true;
+        Question thisQue = questions.get(whichRound );
+        ArrayList<String> thisAns = thisQue.getAnswers();
+         que = thisQue.getQuery();
+         A = thisAns.get(0);
+         B = thisAns.get(1);
+         C = thisAns.get(2);
+         D = thisAns.get(3);
+        // For now we're just going to load up a short default eastbound snake
+        // that's just turned north
 
-             i.putExtra("questionsAsString", questionsAsStr);//
-
-             this.getContext().startActivity(i);
-        }else{
-	        resetApples=true;
-	        Question thisQue = questions.get(whichRound );
-	        ArrayList<String> thisAns = thisQue.getAnswers();
-	         que = thisQue.getQuery();
-	         A = thisAns.get(0);
-	         B = thisAns.get(1);
-	         C = thisAns.get(2);
-	         D = thisAns.get(3);
-	        // For now we're just going to load up a short default eastbound snake
-	        // that's just turned north
-	
-	        
-	        mSnakeTrail.add(new Coordinate(7, 7));
-	        mSnakeTrail.add(new Coordinate(6, 7));
-	        mSnakeTrail.add(new Coordinate(5, 7));
-	        mSnakeTrail.add(new Coordinate(4, 7));
-	        mSnakeTrail.add(new Coordinate(3, 7));
-	        mSnakeTrail.add(new Coordinate(2, 7));
-	        mNextDirection = NORTH;
-	        
-	        resetApples=true;
-	        alreadyAdded.clear();
-	        mScore = 0;
-        }
+        
+        mSnakeTrail.add(new Coordinate(7, 7));
+        mSnakeTrail.add(new Coordinate(6, 7));
+        mSnakeTrail.add(new Coordinate(5, 7));
+        mSnakeTrail.add(new Coordinate(4, 7));
+        mSnakeTrail.add(new Coordinate(3, 7));
+        mSnakeTrail.add(new Coordinate(2, 7));
+        mNextDirection = NORTH;
+        
+        resetApples=true;
+        alreadyAdded.clear();
+        mScore = 0;
+    
     }
 
 
@@ -429,8 +387,6 @@ public boolean onTopToBottomSwipe(){
      		questionsAsStr.add(questions.get(i).toString());
      	}
      	Intent i = new Intent(this.getContext(),ScoreReport.class);
-         int imsc = (int)mScore;
-         i.putExtra("finalScore", imsc);
          i.putExtra("whichQuiz", whichQuiz);
          i.putExtra("playerAnswers", playerAnswers);
          i.putExtra("queryMap", queryMap);
@@ -466,8 +422,6 @@ public boolean onTopToBottomSwipe(){
             str = res.getText(R.string.mode_ready);
         }
         if (newMode == LOSE) {
-          /*  str = res.getString(R.string.mode_lose_prefix) + mScore
-                  + res.getString(R.string.mode_lose_suffix);*/
         	ArrayList<String> questionsAsStr = new ArrayList<String>();
         	for(Question q : questions){
         		questionsAsStr.add(q.toString());
@@ -475,9 +429,6 @@ public boolean onTopToBottomSwipe(){
             Intent i = new Intent(this.getContext(),ScoreReport.class);
          	resetApples=true;
 
-            int imsc = (int)mScore;
-            i.putExtra("finalScore", imsc);
-     //       Log.w("sss",String.valueOf(imsc)+ "ssssssssssssss");
             i.putExtra("whichQuiz", whichQuiz);
 
             i.putExtra("playerAnswers4", playerAnswers);
@@ -557,11 +508,10 @@ public boolean onTopToBottomSwipe(){
                  que = thisQue.getQuery();
                  for(int sz = 0 ; sz < thisAns.size() ; sz++){
                 	 switch(sz){
-                	 case 0 : A = thisAns.get(sz);
-                	 case 1 : B = thisAns.get(sz);
-                	 case 2 : C = thisAns.get(sz);
-                	 case 3 : D = thisAns.get(sz);
-
+	                	 case 0 : A = thisAns.get(sz);
+	                	 case 1 : B = thisAns.get(sz);
+	                	 case 2 : C = thisAns.get(sz);
+	                	 case 3 : D = thisAns.get(sz);
                 	 }
                  }
             	  String qdisp = que;
@@ -772,8 +722,7 @@ public boolean onTopToBottomSwipe(){
                      	}
                      	resetApples=true;
                      	Intent i = new Intent(this.getContext(),ScoreReport.class);
-                         int imsc = (int)mScore;
-                         i.putExtra("finalScore", imsc);
+                         
                          i.putExtra("whichQuiz", whichQuiz);
                          i.putExtra("playerAnswers", playerAnswers);
                          i.putExtra("queryMap", queryMap);
@@ -799,9 +748,7 @@ public boolean onTopToBottomSwipe(){
                  		questionsAsStr.add(q.toString());
                  	}
                  	Intent i = new Intent(this.getContext(),ScoreReport.class);
-                 	resetApples=true;
-                     int imsc = (int)mScore;
-                     i.putExtra("finalScore", imsc);
+                 	
                      i.putExtra("whichQuiz", whichQuiz);
                      i.putExtra("queryMap", queryMap);
                      i.putExtra("playerAnswers", playerAnswers);
@@ -815,34 +762,25 @@ public boolean onTopToBottomSwipe(){
         }
         if(rtn){
        	 resetToStartSnake();
-
-        	
-        }else{
-        // push a new head onto the ArrayList and pull off the tail
-        mSnakeTrail.add(0, newHead);
-        // except if we want the snake to grow
-        if (!growSnake) {
-            mSnakeTrail.remove(mSnakeTrail.size() - 1);
-        }
-
-        int index = 0;
-        for (Coordinate c : mSnakeTrail) {
-            if (index == 0) {
-                setTile(YELLOW_STAR, c.x, c.y);
-            } else {
-                setTile(RED_STAR, c.x, c.y);
-            }
-            index++;
-        }
+	    }else{
+	        // push a new head onto the ArrayList and pull off the tail
+	        mSnakeTrail.add(0, newHead);
+	        // except if we want the snake to grow
+	        if (!growSnake) {
+	            mSnakeTrail.remove(mSnakeTrail.size() - 1);
+	        }
+	        int index = 0;
+	        for (Coordinate c : mSnakeTrail) {
+	            if (index == 0) {
+	                setTile(YELLOW_STAR, c.x, c.y);
+	            } else {
+	                setTile(RED_STAR, c.x, c.y);
+	            }
+	            index++;
+	        }
         }
     }
 
-    /**
-     * Simple class containing two integer values and a comparison function.
-     * There's probably something I should use instead, but this was quick and
-     * easy to build.
-     * 
-     */
      class Coordinate {
         public int x;
         public int y;
