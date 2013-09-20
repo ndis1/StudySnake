@@ -37,9 +37,10 @@ public class SnakeView extends TileView implements OnTouchListener{
     private int whichRound=0;
     private String A;
     private String B;
-    private String que;
     private String C;
     private String D;
+    private String que;
+
     private boolean redOn = false;
     private boolean greenOn = false;
 
@@ -154,30 +155,26 @@ public class SnakeView extends TileView implements OnTouchListener{
     	super(context, attrs, defStyle);
     	initSnakeView();
     }
-
-public boolean onRightToLeftSwipe(){
-   // Log.i(logTag, "RightToLeftSwipe!");
-    
-
-    if (mDirection != EAST) {
-        mNextDirection = WEST;
-    }
-    return true;
-
-}
-public boolean onLeftToRightSwipe(){   
-    if (mDirection != WEST) {
-        mNextDirection = EAST;
-    }
-    return true;
-}
-public boolean onTopToBottomSwipe(){ 
-
-    if (mDirection != NORTH) {
-        mNextDirection = SOUTH;
-    }
-    return true;
-}
+	
+	public boolean onRightToLeftSwipe(){   
+	    if (mDirection != EAST) {
+	        mNextDirection = WEST;
+	    }
+	    return true;
+	}
+	public boolean onLeftToRightSwipe(){   
+	    if (mDirection != WEST) {
+	        mNextDirection = EAST;
+	    }
+	    return true;
+	}
+	public boolean onTopToBottomSwipe(){ 
+	
+	    if (mDirection != NORTH) {
+	        mNextDirection = SOUTH;
+	    }
+	    return true;
+	}
 	public boolean onBottomToTopSwipe(){
 	    if (mMode == READY | mMode == LOSE) {
 	        // At the beginning of the game, or the end of a previous one,
@@ -500,39 +497,34 @@ public boolean onTopToBottomSwipe(){
     public void update() {
         if (mMode == RUNNING) {
             long now = System.currentTimeMillis();
-
             if (now - mLastMove > mMoveDelay) {
-
                 Question thisQue = questions.get(whichRound);
                 ArrayList<String> thisAns = thisQue.getAnswers();
-                 que = thisQue.getQuery();
-                 for(int sz = 0 ; sz < thisAns.size() ; sz++){
-                	 switch(sz){
+                que = thisQue.getQuery();
+                for(int sz = 0 ; sz < thisAns.size() ; sz++){
+                	switch(sz){
 	                	 case 0 : A = thisAns.get(sz);
 	                	 case 1 : B = thisAns.get(sz);
 	                	 case 2 : C = thisAns.get(sz);
 	                	 case 3 : D = thisAns.get(sz);
                 	 }
                  }
-            	  String qdisp = que;
-            	  String nxt = "";
-
-                  for(int s = 0 ; s < 4 ; s++){
-                	  switch(s){
-                	  case 0 : nxt = nxt + "\nA: " + A;
-                	  break;
-                	  case 1 :
+            	 String qdisp = que;
+            	 String nxt = "";
+                 for(int s = 0 ; s < 4 ; s++){
+                	 switch(s){
+                	 	case 0 : nxt = nxt + "\nA: " + A;
+                	 	break;
+                	 	case 1 :
                 		  if(numberOfNextAnswers==1){
                     		  nxt = nxt +"\n      ";
-
                 		  }else{
-                		  nxt = nxt +"\nB: " + B;
+                			  nxt = nxt +"\nB: " + B;
                 		  }
                 	  break;
                 	  case 2 : 
                 		  if(numberOfNextAnswers<3){
                     		  nxt = nxt +"\n        ";
-
                 		  }else{
                 			  nxt = nxt + "\nC: " + C ;
                 		  }
@@ -540,19 +532,16 @@ public boolean onTopToBottomSwipe(){
                 	  case 3 :
                 		  if(numberOfNextAnswers!=4){
                     		  nxt = nxt +"\n        ";
-
                 		  }else{
                 			  nxt = nxt + "\nD: " + D ;
                 		  }
                 	  break;
                 	  }
                   }
-               
             	  qdisp = qdisp + nxt;
                   questionDisp.setText(qdisp);
-              
-                clearTiles();
-               updateWalls();
+                  clearTiles();
+                  updateWalls();
                if(redOn){
             	   redCoverOff();
             	   redOn = false;
@@ -562,12 +551,10 @@ public boolean onTopToBottomSwipe(){
             	   greenOn = false;
                }
                 updateSnake();
-
                 mLastMove = now;
             }
             if(resetApples){
                 alreadyAdded.clear();
-
                 mAppleList.clear();
                 for(int i = 0 ; i < numberOfNextAnswers ; i++){//
                 addRandomApple();//
@@ -587,7 +574,7 @@ public boolean onTopToBottomSwipe(){
     private void updateWalls() {
         for (int x = 0; x < mXTileCount; x++) {
             setTile(GREEN_STAR, x, 0);
-           setTile(GREEN_STAR, x, mYTileCount - 1);
+            setTile(GREEN_STAR, x, mYTileCount - 1);
         }
         for (int y = 1; y < mYTileCount - 1; y++) {
             setTile(GREEN_STAR, 0, y);
@@ -624,57 +611,46 @@ public boolean onTopToBottomSwipe(){
      */
     private void updateSnake() {
         boolean growSnake = false;
-    
         Coordinate head = mSnakeTrail.get(0);
         Coordinate newHead = new Coordinate(1, 1);
-
         mDirection = mNextDirection;
-
         switch (mDirection) {
-        case EAST: {
-            newHead = new Coordinate(head.x + 1, head.y);
-            break;
+	        case EAST: {
+	            newHead = new Coordinate(head.x + 1, head.y);
+	            break;
+	        }
+	        case WEST: {
+	            newHead = new Coordinate(head.x - 1, head.y);
+	            break;
+	        }
+	        case NORTH: {
+	            newHead = new Coordinate(head.x, head.y - 1);
+	            break;
+	        }
+	        case SOUTH: {
+	            newHead = new Coordinate(head.x, head.y + 1);
+	            break;
+	        }
         }
-        case WEST: {
-            newHead = new Coordinate(head.x - 1, head.y);
-            break;
-        }
-        case NORTH: {
-            newHead = new Coordinate(head.x, head.y - 1);
-            break;
-        }
-        case SOUTH: {
-            newHead = new Coordinate(head.x, head.y + 1);
-            break;
-        }
-        }
-
         // Collision detection
         // For now we have a 1-square wall around the entire arena
         if ((newHead.x < 1) || (newHead.y < 1) || (newHead.x > mXTileCount - 2)
                 || (newHead.y > mYTileCount - 2)) {
-          //  setMode(LOSE);
         	resetToStartSnake();
             return;
-
         }
-
         // Look for collisions with itself
         int snakelength = mSnakeTrail.size();
         for (int snakeindex = 0; snakeindex < snakelength; snakeindex++) {
             Coordinate c = mSnakeTrail.get(snakeindex);
             if (c.equals(newHead)) {
-               // setMode(LOSE);
             	resetToStartSnake();
-
                 return;
             }
         }
-        
         // Look for apples//
         int applecount = mAppleList.size();
-      	 boolean rtn = false;
-
+      	boolean resetToStartSn = false;
         for (int appleindex = 0; appleindex < applecount; appleindex++) {
             Coordinate c = mAppleList.get(appleindex);
             LtrCoordinate lc = mAppleList.get(appleindex);
@@ -685,9 +661,8 @@ public boolean onTopToBottomSwipe(){
                 ArrayList<String> preAns = preQue.getAnswers();
                 String corAnsStr = preQue.getCorrectAnswer();//
                 String preAnsLcVal  = preAns.get(lcVal);
-//
-           	 whichRound++;
-            	 if(preAnsLcVal.equals(corAnsStr)){
+                whichRound++;
+            	if(preAnsLcVal.equals(corAnsStr)){
             		greenCoverOn();
             		greenOn = true;
                  	mScore= mScore+1;
@@ -734,7 +709,7 @@ public boolean onTopToBottomSwipe(){
                 	 
                 	 redCoverOn();
                 	 redOn = true;
-                	 rtn = true;
+                	 resetToStartSn = true;
                 	 preAns.remove(preAnsLcVal);
                      preQue.setMyAnswers(preAns);
                 	 questions.add(preQue);
@@ -760,7 +735,7 @@ public boolean onTopToBottomSwipe(){
             	 break;
             }
         }
-        if(rtn){
+        if(resetToStartSn){
        	 resetToStartSnake();
 	    }else{
 	        // push a new head onto the ArrayList and pull off the tail
@@ -780,7 +755,7 @@ public boolean onTopToBottomSwipe(){
 	        }
         }
     }
-
+/////This class is a basic coordinate 
      class Coordinate {
         public int x;
         public int y;
@@ -805,6 +780,7 @@ public boolean onTopToBottomSwipe(){
             return "Coordinate: [" + x + "," + y + "]";
         }
     }
+     ///slightly expand the basic coodrdinate to also hold a letter
     private class LtrCoordinate extends Coordinate {
         public int Ltr;
         
@@ -838,42 +814,42 @@ public boolean onTopToBottomSwipe(){
 
 
     public void resetToStartSnake(){
-
+    	//clear the old snke
     	mSnakeTrail.clear();
-    	 mSnakeTrail.add(new Coordinate(7, 7));
-         mSnakeTrail.add(new Coordinate(6, 7));
-         mSnakeTrail.add(new Coordinate(5, 7));
-         mSnakeTrail.add(new Coordinate(4, 7));
-         mSnakeTrail.add(new Coordinate(3, 7));
-         mSnakeTrail.add(new Coordinate(2, 7));
+    	//reset the start snake
+    	mSnakeTrail.add(new Coordinate(7, 7));
+        mSnakeTrail.add(new Coordinate(6, 7));
+        mSnakeTrail.add(new Coordinate(5, 7));
+        mSnakeTrail.add(new Coordinate(4, 7));
+        mSnakeTrail.add(new Coordinate(3, 7));
+        mSnakeTrail.add(new Coordinate(2, 7));
+        //reset to starting velocity
         mMoveDelay = 450;
+        //starting direction in moved to south, unless it was north
         if(mDirection!=NORTH){
-        mNextDirection=SOUTH;
+        	mNextDirection=SOUTH;
         }
     }
     
     public void redCoverOn(){
-   	 ((Snake)getContext()).findViewById(R.id.bac_dim_lasn).setVisibility(RelativeLayout.VISIBLE);
-
+    	((Snake)getContext()).findViewById(R.id.bac_dim_lasn).setVisibility(RelativeLayout.VISIBLE);
     }
     public void redCoverOff(){
       	 ((Snake)getContext()).findViewById(R.id.bac_dim_lasn).setVisibility(RelativeLayout.GONE);
-
     }
     
     public void greenCoverOn(){
       	 ((Snake)getContext()).findViewById(R.id.bac_dim_lasn_green).setVisibility(RelativeLayout.VISIBLE);
-      	((Snake)getContext()).beep(10);
+      	 ((Snake)getContext()).beep(10);
     }
     
     public void greenCoverOff(){
-         	 ((Snake)getContext()).findViewById(R.id.bac_dim_lasn_green).setVisibility(RelativeLayout.GONE);
-            	((Snake)getContext()).beepOff();
+        ((Snake)getContext()).findViewById(R.id.bac_dim_lasn_green).setVisibility(RelativeLayout.GONE);
+        ((Snake)getContext()).beepOff();
     }
      
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-			    
 	    	switch(event.getAction()){
 	        case MotionEvent.ACTION_DOWN: {
 	            downX = event.getX();
@@ -888,12 +864,11 @@ public boolean onTopToBottomSwipe(){
 	            float deltaY = downY - upY;
 
 	            if(Math.abs(deltaX)>Math.abs(deltaY)){
-	            if(Math.abs(deltaX) > MIN_DISTANCEH){
-	                // left or right
-	                if(deltaX < 0) { return this.onLeftToRightSwipe() ; }
-	                if(deltaX > 0) {  return this.onRightToLeftSwipe(); }
-	            }
-	            
+		            if(Math.abs(deltaX) > MIN_DISTANCEH){
+		                // left or right
+		                if(deltaX < 0) { return this.onLeftToRightSwipe() ; }
+		                if(deltaX > 0) {  return this.onRightToLeftSwipe(); }
+		            }
 	            }//
 	            // swipe vertical?
 	            if(Math.abs(deltaY) > MIN_DISTANCEV){
@@ -902,10 +877,8 @@ public boolean onTopToBottomSwipe(){
 	                if(deltaY > 0) {  return this.onBottomToTopSwipe(); }
 	            }
 	            else {
-	                    Log.i(logTag, "Swipe was only " + Math.abs(deltaX) + " long, need at least " + MIN_DISTANCEV);
-	                    return false; // We don't consume the event
+	            	return false; // We don't consume the event
 	            }
-
 	            return true;
 	        }
 	    }

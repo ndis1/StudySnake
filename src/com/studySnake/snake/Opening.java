@@ -2,9 +2,11 @@
 package com.studySnake.snake;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,20 +14,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
 import com.parse.FindCallback;
-import com.parse.Parse;
-import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;//
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.studySnake.snake.R;
-import com.studySnake.snake.model.UserManager;
+//
 
-public class Opening extends Activity {
-    
+public class Opening extends ListActivity {
+    private ArrayList<Quiz> quizzes = new ArrayList<Quiz>();
     private static String ICICLE_KEY = "snake-view";
     private Context context;
     
@@ -40,6 +40,7 @@ public class Opening extends Activity {
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
+    //log out of parse and kill all activities before the top activity
     public void parseLogout(){
     	ParseUser.logOut();
     	Intent i = new Intent(context,Login.class);
@@ -57,71 +58,63 @@ public class Opening extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     	context = this;
-
         setContentView(R.layout.opening_layout);
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Todo");
+        getButtons();
+        
+    }
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+	    super.onListItemClick(l, v, position, id);
+	    // Get the item that was clicked
+	    Quiz quizClickedByUser = (Quiz) this.getListAdapter().getItem(position);
+	    Intent i = new Intent(context,Snake.class);
+	    String passer = "";
+	    int idCtr = 0;
+	    for(Question q : quizClickedByUser.getQuestions()){
+	    	ArrayList< String> answers = q.getAnswers();
+	    	passer = passer+" nxn "+q.getQuery().trim()+" , "+answers.get(0).trim()+" , "+answers.get(1).trim()+" , "+answers.get(2).trim()+" , "+answers.get(3).trim()+" , "+q.getCorrectAnswer().trim()+" , "+idCtr;
+	    	idCtr++;
+	    }    
+	    i.putExtra("whichQuiz", passer);
+	    startActivity(i);
+    }
+    private void getButtons(){
+    	ParseQuery<ParseObject> query = ParseQuery.getQuery("Todo");
         query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
 			public void done(final List<ParseObject> objects, ParseException e) {
-				ArrayList<String> quizesFound = new ArrayList<String>();
-				ArrayList<Button> dynButtons=	new ArrayList<Button>();
-				final ParseObject p1 = objects.get(0);
-				dynButtons.add(new Button(getBaseContext()));
-				dynButtons.get(0).setId(33);
-				dynButtons.get(0).setBackgroundResource(R.drawable.greenstar);
-				dynButtons.get(0).setText(p1.getString("title"));
-				quizesFound.add(p1.getString("title"));
-				dynButtons.get(0).setMinimumHeight(150);
-				dynButtons.get(0).setMinimumWidth(150);
-		        RelativeLayout rl = (RelativeLayout) findViewById(R.id.generic_button);
-		        rl.addView(dynButtons.get(0)); 
-		        dynButtons.get(0).setOnClickListener(new View.OnClickListener() {
-		            public void onClick(View v) {
-		                Intent i = new Intent(context,Snake.class);
-		                String passer = "";
-		                for(ParseObject ppo : objects){
-		                	if(ppo.getString("title").equals(p1.getString("title"))){
-		                		passer = passer+" nxn "+ppo.getString("content")+" , "+ppo.getString("choices")+" , "+ppo.getString("answer")+" , "+1;
-		                	}
-		                }
-		                i.putExtra("whichQuiz", passer);
-		                startActivity(i);
-		            }
-		        });
-		        int btnCt = 1;
-		        ArrayList<  RelativeLayout.LayoutParams> listLp = new   ArrayList<RelativeLayout.LayoutParams>();
-				for(final ParseObject po : objects){
-					if(!po.equals(p1)){
-						String playerName = po.getString("title");
-						if(!quizesFound.contains(playerName)){
-							btnCt++;
-							quizesFound.add(playerName);
-							dynButtons.add(new Button(getBaseContext()));
-							dynButtons.get(btnCt-1).setId(33+btnCt-1);
-							dynButtons.get(btnCt-1).setBackgroundResource(R.drawable.greenstar);
-							dynButtons.get(btnCt-1).setText(po.getString("title"));
-							dynButtons.get(btnCt-1).setMinimumHeight(150);
-							dynButtons.get(btnCt-1).setMinimumWidth(150);
-					        listLp.add(new RelativeLayout.LayoutParams(
-					        RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
-					        listLp.get(btnCt-2).addRule(RelativeLayout.BELOW, 33+btnCt-2);			        
-					        rl.addView(dynButtons.get(btnCt-1),listLp.get(btnCt-2)); 
-					        dynButtons.get(btnCt-1).setOnClickListener(new View.OnClickListener() {
-					            public void onClick(View v) {
-					            	Intent i = new Intent(context,Snake.class);
-					                String passer = "";
-					                for(ParseObject ppo : objects){
-					                	if(ppo.getString("title").equals(po.getString("title"))){
-					                		passer = passer+" nxn "+ppo.getString("content")+" , "+ppo.getString("choices")+" , "+ppo.getString("answer")+" , "+1;
-					                	}
-					                }
-					                i.putExtra("whichQuiz", passer);
-					                startActivity(i);
-					            }
-					        });
-						}
+				int questionCt = 0;
+				HashMap<String,ArrayList<Question>> quizesFound = new HashMap<String,ArrayList<Question>>();
+				for(ParseObject po : objects){
+					String quizName = po.getString("title");
+					String answer = po.getString("answer");
+					String choicesAsBlob = po.getString("choices");
+			        String [] bits=  choicesAsBlob.split(",");
+					ArrayList<String> choices = new ArrayList<String>();
+			        for(String b : bits){
+			        	b.trim();
+			        	if(!b.equals("")){
+			        		choices.add(b);
+			        	}
+			        }
+					String query = po.getString("content");
+					ArrayList<Question> questions;
+					if(quizesFound.containsKey(quizName)){
+						questions = quizesFound.get(quizName);
+					}else{
+						questions = new ArrayList<Question>();
 					}
+					Question nextQuestion = new Question(query, choices, answer, questionCt);
+					questions.add(nextQuestion);
+					quizesFound.put(quizName, questions);
 				}
+				for (Map.Entry<String, ArrayList<Question>> entry : quizesFound.entrySet()) {
+				    String key = entry.getKey();
+				    ArrayList<Question> value = entry.getValue();
+				    quizzes.add(new Quiz(value,key));
+				}
+				ArrayAdapter<Quiz> adapter = new ArrayAdapter<Quiz>(context,
+				        android.R.layout.simple_list_item_1, quizzes);
+		        setListAdapter(adapter);
 			}
         });
     }
