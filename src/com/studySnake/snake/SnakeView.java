@@ -2,6 +2,7 @@
 package com.studySnake.snake;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -17,6 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -27,11 +29,9 @@ import android.widget.TextView;
 
 
 public class SnakeView extends TileView implements OnTouchListener{
-	private String whichQuiz;
 	private boolean resetApples;
 	private static ArrayList<Question> questions;
-	private HashMap<Integer,ArrayList<String>> playerAnswers = new HashMap<Integer,ArrayList<String>>();
-	private HashMap<Integer,ArrayList<String>> queryMap = new HashMap<Integer,ArrayList<String>>();
+	private Quiz quizz;
 
     private static final String TAG = "SnakeView";
     private int whichRound=0;
@@ -223,7 +223,7 @@ public class SnakeView extends TileView implements OnTouchListener{
         mAppleList.clear();
         resetApples=true;
         Question thisQue = questions.get(whichRound );
-        ArrayList<String> thisAns = thisQue.getAnswers();
+        ArrayList<String> thisAns = thisQue.getAnswers2();
          que = thisQue.getQuery();
          A = thisAns.get(0);
          B = thisAns.get(1);
@@ -372,24 +372,18 @@ public class SnakeView extends TileView implements OnTouchListener{
      * 
      * 
      */
-    public void setQuestions(ArrayList<Question> newQuestions){
-    	questions = newQuestions;
+    public void setQuestions(Quiz q){
+    	quizz = q;
+    	ArrayList<Question> fromQuiz = q.getQuestions();
+    	Collections.shuffle(fromQuiz);
+    	questions = fromQuiz;
     }
     
     //allow the game to end before all questons answered
     public void early_end(){
     	resetApples=true;
-    	ArrayList<String> questionsAsStr = new ArrayList<String>();
-     	for(int i = 0; i< playerAnswers.size(); i++){
-     		questionsAsStr.add(questions.get(i).toString());
-     	}
      	Intent i = new Intent(this.getContext(),ScoreReport.class);
-         i.putExtra("whichQuiz", whichQuiz);
-         i.putExtra("playerAnswers", playerAnswers);
-         i.putExtra("queryMap", queryMap);
-
-         i.putExtra("questionsAsString", questionsAsStr);//
-
+         i.putExtra("whichQuiz", (Parcelable)quizz);
          this.getContext().startActivity(i);
     }
     
@@ -419,19 +413,12 @@ public class SnakeView extends TileView implements OnTouchListener{
             str = res.getText(R.string.mode_ready);
         }
         if (newMode == LOSE) {
-        	ArrayList<String> questionsAsStr = new ArrayList<String>();
-        	for(Question q : questions){
-        		questionsAsStr.add(q.toString());
-        	}
             Intent i = new Intent(this.getContext(),ScoreReport.class);
          	resetApples=true;
 
-            i.putExtra("whichQuiz", whichQuiz);
+            i.putExtra("whichQuiz",(Parcelable) quizz);
 
-            i.putExtra("playerAnswers4", playerAnswers);
-            i.putExtra("queryMap", queryMap);
 
-            i.putExtra("questionsAsString", questionsAsStr);
 
             this.getContext().startActivity(i);
             
@@ -448,9 +435,7 @@ public class SnakeView extends TileView implements OnTouchListener{
      * truly excellent snake-player.
      * 
      */
-    public void setWhichQuiz(String quizUsed){
-    	whichQuiz=quizUsed;
-    }
+    
     private void addRandomApple() {
         LtrCoordinate newCoord = null;
         boolean found = false;
@@ -662,74 +647,40 @@ public class SnakeView extends TileView implements OnTouchListener{
                 String corAnsStr = preQue.getCorrectAnswer();//
                 String preAnsLcVal  = preAns.get(lcVal);
                 whichRound++;
-            	if(preAnsLcVal.equals(corAnsStr)){
+            	if(preAnsLcVal.trim().equals(corAnsStr.trim())){
             		greenCoverOn();
             		greenOn = true;
                  	mScore= mScore+1;
-                    if(playerAnswers.containsKey(numberOfNextAnswers)){
-                    	ArrayList<String> newALS = playerAnswers.get(numberOfNextAnswers);
-
-                    	newALS.add(preAnsLcVal);
-                    	playerAnswers.put(numberOfNextAnswers, newALS);
-                    }else{
-                    	ArrayList<String> newALS = new ArrayList<String>();
-                    	newALS.add(preAnsLcVal);
-                    	playerAnswers.put(numberOfNextAnswers, newALS);
+                  //  preQue.setTryGottenOn(4-numberOfNextAnswers);
+                  //  preQue.setDone(true);
+                    mMoveDelay *= 0.9;
+                    growSnake = true;
+                    preQue.setDone(true);
+                    quizz.addTryRecord(5-numberOfNextAnswers, preQue.getId());
+                    if(whichRound==questions.size()){
+                       whichRound =0;
+                       resetApples=true;
+                       Intent i = new Intent(this.getContext(),ScoreReport.class);
+                       i.putExtra("whichQuiz",(Parcelable) quizz);
+                       this.getContext().startActivity(i);
                     }
-                    if(queryMap.containsKey(numberOfNextAnswers)){
-                    	ArrayList<String> newALS = queryMap.get(numberOfNextAnswers);
-
-                    	newALS.add(preQue.getQuery());
-                    	queryMap.put(numberOfNextAnswers, newALS);
-                    }else{
-                    	ArrayList<String> newALS = new ArrayList<String>();
-                    	newALS.add(preQue.getQuery());
-                    	queryMap.put(numberOfNextAnswers, newALS);
-                    }
-                     mMoveDelay *= 0.9;
-                     growSnake = true;//
-                     if(whichRound==questions.size()){
-                         whichRound =0;
-
-                     	ArrayList<String> questionsAsStr = new ArrayList<String>();
-                     	for(Question q : questions){
-                     		questionsAsStr.add(q.toString());
-                     	}
-                     	resetApples=true;
-                     	Intent i = new Intent(this.getContext(),ScoreReport.class);
-                         
-                         i.putExtra("whichQuiz", whichQuiz);
-                         i.putExtra("playerAnswers", playerAnswers);
-                         i.putExtra("queryMap", queryMap);
-                         i.putExtra("questionsAsString", questionsAsStr);//
-
-                         this.getContext().startActivity(i);
-                     }
+                 
                  }else{
-                	 
                 	 redCoverOn();
                 	 redOn = true;
                 	 resetToStartSn = true;
                 	 preAns.remove(preAnsLcVal);
-                     preQue.setMyAnswers(preAns);
-                	 questions.add(preQue);
+                	 quizz.setNumberOfQuestions(quizz.getNumberOfQuestions()+1);
+                     Question preQueCopy = new Question(preQue.getQuery(),preQue.getAnswers(), preQue.getAnswers2(),preQue.getCorrectAnswer(),quizz.getNumberOfQuestions());
+                     preQueCopy.setMyAnswers(preAns);
+                	 questions.add(preQueCopy);
                  }
                 	numberOfNextAnswers = questions.get(whichRound).getAnswers().size();
-//
             	 if(whichRound==questions.size()){
-                     whichRound =0;
-                 	ArrayList<String> questionsAsStr = new ArrayList<String>();
-                 	for(Question q : questions){
-                 		questionsAsStr.add(q.toString());
-                 	}
-                 	Intent i = new Intent(this.getContext(),ScoreReport.class);
-                 	
-                     i.putExtra("whichQuiz", whichQuiz);
-                     i.putExtra("queryMap", queryMap);
-                     i.putExtra("playerAnswers", playerAnswers);
-                     i.putExtra("questionsAsString", questionsAsStr);//
-
-                     this.getContext().startActivity(i);
+                    whichRound =0;
+                   	Intent i = new Intent(this.getContext(),ScoreReport.class);
+                    i.putExtra("whichQuiz",(Parcelable) quizz);
+                    this.getContext().startActivity(i);
                  }
                 
             	 break;
@@ -814,7 +765,7 @@ public class SnakeView extends TileView implements OnTouchListener{
 
 
     public void resetToStartSnake(){
-    	//clear the old snke
+    	//clear the old snake
     	mSnakeTrail.clear();
     	//reset the start snake
     	mSnakeTrail.add(new Coordinate(7, 7));
@@ -847,7 +798,7 @@ public class SnakeView extends TileView implements OnTouchListener{
         ((Snake)getContext()).findViewById(R.id.bac_dim_lasn_green).setVisibility(RelativeLayout.GONE);
         ((Snake)getContext()).beepOff();
     }
-     
+    
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 	    	switch(event.getAction()){

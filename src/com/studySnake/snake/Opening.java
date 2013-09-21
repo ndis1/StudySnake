@@ -1,6 +1,8 @@
 
 package com.studySnake.snake;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,11 +12,11 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.parse.FindCallback;
@@ -28,6 +30,7 @@ public class Opening extends ListActivity {
     private ArrayList<Quiz> quizzes = new ArrayList<Quiz>();
     private static String ICICLE_KEY = "snake-view";
     private Context context;
+    private String CACHE_KEY = "quiz-cache";
     
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -40,8 +43,17 @@ public class Opening extends ListActivity {
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
+  
     //log out of parse and kill all activities before the top activity
     public void parseLogout(){
+         ArrayList<Quiz> quizzesEmpty = new ArrayList<Quiz>();
+
+    	try {
+			InternalStorage.writeObject(this, CACHE_KEY,quizzesEmpty);
+		} catch (IOException e) {
+			Log.wtf("WWWWWWWWRITERROR", "NO WRITE");
+			e.printStackTrace();
+		}
     	ParseUser.logOut();
     	Intent i = new Intent(context,Login.class);
     	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -59,25 +71,62 @@ public class Opening extends ListActivity {
         super.onCreate(savedInstanceState);
     	context = this;
         setContentView(R.layout.opening_layout);
-        getButtons();
+       // getQuizzesFromParse();
+
+   	   try {
+		List<Quiz> cachedEntries = (List<Quiz>) InternalStorage.readObject(this, CACHE_KEY);
+		if(cachedEntries.size() == 0 ){
+	        getQuizzesFromParse();
+
+		}else{
+			quizzes.addAll(cachedEntries);
+			ColoredArrayAdapter<Quiz> adapter = new ColoredArrayAdapter<Quiz>(context,
+			        android.R.layout.simple_list_item_1, quizzes);
+	        setListAdapter(adapter);
+		}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+       
         
+    }
+    private void cacheQuizzes(){
+    	 Log.wtf("WWWWWW", "Starting");
+         try {
+      	   // Save the list of entries to internal storage
+      	   InternalStorage.writeObject(this, CACHE_KEY, quizzes);
+      	 Log.wtf("WWWWWW", "Starting");
+
+      	   /*// Retrieve the list from internal storage
+      	     Log.wtf("entries", cachedEntries.size()+"SIZE");
+
+      	   // Display the items from the list retrieved.
+      	   for (Quiz entry : cachedEntries) {
+      	     Log.wtf("entries", entry.getName());
+      	   }*/
+      	} catch (IOException e) {
+      	   Log.wtf("io excep", e.getMessage());
+      	}
     }
     protected void onListItemClick(ListView l, View v, int position, long id) {
 	    super.onListItemClick(l, v, position, id);
-	    // Get the item that was clicked
+	    // Get the quiz that was clicked 
 	    Quiz quizClickedByUser = (Quiz) this.getListAdapter().getItem(position);
-	    Intent i = new Intent(context,Snake.class);
-	    String passer = "";
-	    int idCtr = 0;
 	    for(Question q : quizClickedByUser.getQuestions()){
-	    	ArrayList< String> answers = q.getAnswers();
-	    	passer = passer+" nxn "+q.getQuery().trim()+" , "+answers.get(0).trim()+" , "+answers.get(1).trim()+" , "+answers.get(2).trim()+" , "+answers.get(3).trim()+" , "+q.getCorrectAnswer().trim()+" , "+idCtr;
-	    	idCtr++;
-	    }    
-	    i.putExtra("whichQuiz", passer);
+		    quizClickedByUser.addTryRecord(0, q.getId());
+	    }
+	    Intent i = new Intent(context,Snake.class);
+	  
+	    i.putExtra("whichQuiz",(Parcelable)  quizClickedByUser);
 	    startActivity(i);
     }
-    private void getButtons(){
+    //pulls the quizzes from parse and puts them into the quiz class
+    private void getQuizzesFromParse(){
     	ParseQuery<ParseObject> query = ParseQuery.getQuery("Todo");
         query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
@@ -86,7 +135,7 @@ public class Opening extends ListActivity {
 				HashMap<String,ArrayList<Question>> quizesFound = new HashMap<String,ArrayList<Question>>();
 				for(ParseObject po : objects){
 					String quizName = po.getString("title");
-					String answer = po.getString("answer");
+					String answer = po.getString("answer").trim();
 					String choicesAsBlob = po.getString("choices");
 			        String [] bits=  choicesAsBlob.split(",");
 					ArrayList<String> choices = new ArrayList<String>();
@@ -103,7 +152,8 @@ public class Opening extends ListActivity {
 					}else{
 						questions = new ArrayList<Question>();
 					}
-					Question nextQuestion = new Question(query, choices, answer, questionCt);
+					Question nextQuestion = new Question(query, choices, choices, answer, questionCt);
+					questionCt++;
 					questions.add(nextQuestion);
 					quizesFound.put(quizName, questions);
 				}
@@ -115,7 +165,9 @@ public class Opening extends ListActivity {
 				ColoredArrayAdapter<Quiz> adapter = new ColoredArrayAdapter<Quiz>(context,
 				        android.R.layout.simple_list_item_1, quizzes);
 		        setListAdapter(adapter);
+		        cacheQuizzes();
 			}
         });
+      
     }
 }

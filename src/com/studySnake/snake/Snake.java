@@ -24,6 +24,7 @@ public class Snake extends Activity {
     private SnakeView mSnakeView;
     private MediaPlayer player=null;
     private static String ICICLE_KEY = "snake-view";
+    private Quiz quiz;
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
@@ -62,13 +63,15 @@ public class Snake extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intentCallFromOpening = getIntent();
-    	String whichQuiz = intentCallFromOpening.getStringExtra("whichQuiz");
+    	//String whichQuiz = intentCallFromOpening.getStringExtra("whichQuiz");
         setContentView(R.layout.snake_layout);
         mSnakeView = (SnakeView) findViewById(R.id.snake);
-        ArrayList<Question> ques =(parseQuestionFromString(whichQuiz));
-        Collections.shuffle(ques);
-        mSnakeView.setQuestions(ques);
-        mSnakeView.setWhichQuiz(whichQuiz);
+       // ArrayList<Question> ques =(parseQuestionFromString(whichQuiz));
+         quiz =intentCallFromOpening.getParcelableExtra("whichQuiz");
+       /* ArrayList<Question> ques = quiz.getQuestions(); 
+        Collections.shuffle(ques);*/
+        mSnakeView.setQuestions(quiz);
+       // mSnakeView.setWhichQuiz(ques);
         mSnakeView.setTextView((TextView) findViewById(R.id.text));
         mSnakeView.setTextView2((TextView) findViewById(R.id.mm));
         mSnakeView.setOnTouchListener(mSnakeView);
@@ -116,7 +119,7 @@ public class Snake extends Activity {
         //Store the game state
         outState.putBundle(ICICLE_KEY, mSnakeView.saveState());
     }
-    public ArrayList<Question> parseQuestionFromString(String filename){
+   /* public ArrayList<Question> parseQuestionFromString(String filename){
     	ArrayList<Question> thisList = new ArrayList<Question>();
 		String [] eachQuestion = filename.split(" nxn ");
 		for(String aQuestion: eachQuestion){
@@ -138,7 +141,7 @@ public class Snake extends Activity {
 			}
 		}
 		return thisList;
-    }
+    }*/
     @Override
     public void onDestroy() {
     	if(player != null){

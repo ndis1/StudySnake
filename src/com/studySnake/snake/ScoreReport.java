@@ -2,6 +2,7 @@
 package com.studySnake.snake;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 import org.achartengine.ChartFactory;
@@ -28,6 +29,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,11 +43,7 @@ import android.widget.Toast;
 
 public class ScoreReport extends Activity {
 	private static final int SERIES_NR = 1;
-	private HashMap<Integer,ArrayList<String>> playerAnswersHashMap = new HashMap<Integer,ArrayList<String>>();
-	private HashMap<Integer,ArrayList<String>> queryHashMap = new HashMap<Integer,ArrayList<String>>();
-
-
-    private ArrayList<String> questions;
+    private ArrayList<Question> questions;
     private Context context;
     private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
     
@@ -59,13 +57,15 @@ public class ScoreReport extends Activity {
     private ResultsFragment searchRadiusQuery;
     private  Intent intentCallFromSnake;
     private String reportString = "starting content";
-    private static final int ALL = 0;
+    private static final int ALL = 5;
+    private static final int WRONG = -1;
+
     private static final int FIRST_TRY = 1;
     private static final int SECOND_TRY = 2;
     private static final int THIRD_TRY = 3;
     private static final int FOURTH_TRY = 4;
-	private int whichTry = ALL;
-
+	private int whichTry = WRONG;
+	private Quiz quiz;
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
@@ -133,32 +133,70 @@ public class ScoreReport extends Activity {
     	
     }
     private void replay(){
-    	   Intent i = new Intent(context,Snake.class);
-           String quizUsed = intentCallFromSnake.getStringExtra("whichQuiz");
-           i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-           i.putExtra("whichQuiz", quizUsed);
-           startActivity(i);
+    	int ct = 0;
+	   Intent i = new Intent(context,Snake.class);
+       i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+       ArrayList<Question> allUniq = filterQuestions(ALL);
+       ArrayList<Question> nuQuestions = new ArrayList<Question>();
+    	   for(Question q : allUniq){
+    		   String query = q.getQuery();
+    		   String nuCorAns = q.getCorrectAnswer();
+    		   ArrayList<String> nuAnswers = new ArrayList<String>();
+    		   for(String s : q.getAnswers2()){
+    			   nuAnswers.add(s);
+    		   }
+    		   nuQuestions.add(new Question(query,nuAnswers,nuAnswers,nuCorAns,ct));
+    		   ct++;
+    	   }
+       
+       Quiz nuQuiz = new Quiz(nuQuestions, quiz.getName());
+       for(int ii = 0; ii < ct ; ii++){
+    	   nuQuiz.addTryRecord(0, ii);
+       }
+       i.putExtra("whichQuiz",(Parcelable) nuQuiz);
+       startActivity(i);
     }
     private void replayWrongAnswers(){
+    	int ct = 0;
  	   Intent i = new Intent(context,Snake.class);
-        String quizUsed = intentCallFromSnake.getStringExtra("whichQuiz");
-    	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        i.putExtra("whichQuiz", filterQuestions(quizUsed, whichTry));
-        if(filterQuestions(quizUsed, whichTry).contains("nxn")){
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        ArrayList<Question> allUniq = filterQuestions(whichTry);
+        
+        if(allUniq.size()>0){
+        	ArrayList<Question> nuQuestions = new ArrayList<Question>();
+      	   for(Question q : allUniq){
+      		   String query = q.getQuery();
+      		   String nuCorAns = q.getCorrectAnswer();
+      		   ArrayList<String> nuAnswers = new ArrayList<String>();
+      		   for(String s : q.getAnswers2()){
+      			   nuAnswers.add(s);
+      		   }
+      		   nuQuestions.add(new Question(query,nuAnswers,nuAnswers,nuCorAns,ct));
+      		   ct++;
+      	   }
+         
+         Quiz nuQuiz = new Quiz(nuQuestions, quiz.getName());
+         for(int ii = 0; ii < ct ; ii++){
+      	   nuQuiz.addTryRecord(0, ii);
+         }
+         
+        	i.putExtra("whichQuiz",(Parcelable) nuQuiz);
+            startActivity(i);
+        //	quiz.reset(allUniq);
         	startActivity(i);
         }else{
         	Toast.makeText(
         		    this, 
         		    "No Wrong Answers, Press \"Play again\" to Replay", 
         		    Toast.LENGTH_LONG).show();
-        		 
         }
- }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         switch(whichTry){
+        case WRONG : getMenuInflater().inflate(R.menu.menu_score_rep_layout, menu);
+        break;
 	        case ALL : getMenuInflater().inflate(R.menu.menu_score_rep_layout, menu);
 	        break;
 	        case FIRST_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers_1, menu);
@@ -181,10 +219,14 @@ public class ScoreReport extends Activity {
 //
         setContentView(R.layout.score_report_layout);
         back_dim_layout = (RelativeLayout) findViewById(R.id.bac_dim_layout);
-         intentCallFromSnake = getIntent();
-        questions = intentCallFromSnake.getExtras().getStringArrayList("questionsAsString");
-        playerAnswersHashMap = (HashMap<Integer, ArrayList<String>>) intentCallFromSnake.getSerializableExtra("playerAnswers");
-        queryHashMap = (HashMap<Integer, ArrayList<String>>) intentCallFromSnake.getSerializableExtra("queryMap");       
+        intentCallFromSnake = getIntent();
+        quiz =intentCallFromSnake.getParcelableExtra("whichQuiz");
+        ArrayList<Question>qw = quiz.getQuestions();
+        questions = new ArrayList<Question>();
+        for(Question qi : qw){
+        	qi.reset();
+        	questions.add(qi);
+        }
        
         if (mChartView == null) {
              layout3 = (LinearLayout) findViewById(R.id.chart);
@@ -203,13 +245,11 @@ public class ScoreReport extends Activity {
                   Toast.makeText(getApplicationContext(), "No chart element", Toast.LENGTH_SHORT).show();
                 } else {
                 	Bundle bundle = new Bundle();
-        		    bundle.putStringArrayList("questionsOnThisDataPt",playerAnswersHashMap.get(4-seriesSelection.getPointIndex()));
-        		    bundle.putStringArrayList("queryOnThisDataPt",queryHashMap.get(4-seriesSelection.getPointIndex()));
         		    bundle.putInt("whichList", seriesSelection.getPointIndex());
         		    setReplayMenu( seriesSelection.getPointIndex()+1);
         		    searchRadiusQuery = new ResultsFragment();
         		    searchRadiusQuery.setArguments(bundle);
-        		    
+        		    bundle.putParcelableArrayList("questz", filterQuestions(seriesSelection.getPointIndex()+1));
         		    getFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, searchRadiusQuery).commit();
                 }
@@ -228,22 +268,17 @@ public class ScoreReport extends Activity {
     }
     public void bdlsvis(){
   	  getFragmentManager().beginTransaction().remove(searchRadiusQuery).commit();
-  	  whichTry = ALL;
+  	  whichTry = WRONG;
   	  this.invalidateOptionsMenu();
     }
     private XYMultipleSeriesDataset getBarDataset() {
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-        final int nr = 4;
         ArrayList<String> legendTitles = new ArrayList<String>();
         legendTitles.add("First Try");
         for (int i = 0; i < SERIES_NR; i++) {
             CategorySeries series = new CategorySeries(legendTitles.get(i));
-            for (int k = 0; k < nr; k++) {
-            	if(playerAnswersHashMap.containsKey(nr-k)){
-                series.add(playerAnswersHashMap.get(nr-k).size());
-            	}else{
-            		series.add(0);
-            	}
+            for (int k = 1; k<5; k++) {
+                series.add(filterQuestions(k).size());
             }
             dataset.addSeries(series.toXYSeries());
         }
@@ -261,7 +296,7 @@ public class ScoreReport extends Activity {
 		renderer.setXAxisMin(0.5);
 		renderer.setXAxisMax(5.5);
 		renderer.setYAxisMin(0);
-		renderer.setYAxisMax(15);
+		renderer.setYAxisMax(questions.size());
 		renderer.addXTextLabel(1, "1");
 		renderer.addXTextLabel(2, "2");
 		renderer.addXTextLabel(3, "3");
@@ -279,16 +314,15 @@ public class ScoreReport extends Activity {
 	
 	public void formatReportString(){
 		
-		String wholeQuiz =  intentCallFromSnake.getStringExtra("whichQuiz");
 		String greeting = "This is your StudySnake report : \n " ;
-		String firstRight = "Questions right on the first try: \n"+ reportFilter(filterQuestions(wholeQuiz,1)) + "\n";
-		String secondRight = "Questions right on the second try: \n"+ reportFilter(filterQuestions(wholeQuiz,2))+ "\n";;
-		String thirdRight ="Questions right on the third try: \n"+  reportFilter(filterQuestions(wholeQuiz,3))+ "\n";;
-		String fourthRight = "Questions right on the fourth try: \n"+ reportFilter(filterQuestions(wholeQuiz,4));
+		String firstRight = "Questions right on the first try: \n"+ reportFilter(filterQuestions(1)) + "\n";
+		String secondRight = "Questions right on the second try: \n"+ reportFilter(filterQuestions(2))+ "\n";;
+		String thirdRight ="Questions right on the third try: \n"+  reportFilter(filterQuestions(3))+ "\n";;
+		String fourthRight = "Questions right on the fourth try: \n"+ reportFilter(filterQuestions(4));
 		reportString = greeting + firstRight + secondRight + thirdRight + fourthRight;
 	}
-	public String reportFilter(String in){
-		String out = "";
+	public String reportFilter(ArrayList<Question> in){
+		/*String out = "";
 		String [] n = in.split(" nxn ");
 		int ct = 0;
 		for(String nextLine: n){
@@ -303,62 +337,38 @@ public class ScoreReport extends Activity {
 				out = out + " "+ ct + " " +"Question : "+ question +" Answer : "+ rightAnswer +"\n";
 			}
 			ct ++;
-		}
-		return out;
+		}*/
+		return "";
 	}
-	public String filterQuestions(String filename, int which){
-    	String nstring = "";
-		String [] n = filename.split(" nxn ");
-		for(String nextLine: n){
-			if(nextLine.contains(" , ")){
-	           String [] bits=  nextLine.split(" , ");
-	           ArrayList<String> answers = new ArrayList<String>();
-	           String a1 = bits[1];
-	           String a2 = bits[2];
-	           String a3 = bits[3];
-	           String a4 = bits[4];
-	           answers.add(a1);
-	           answers.add(a2);
-	           answers.add(a3);
-	           answers.add(a4);
-	           String rightAnswer =bits[5];
-	           if(which == ALL){
-		           if(playerAnswersHashMap.containsKey(4)){
-			           if(!playerAnswersHashMap.get(4).contains(rightAnswer)){
-			        	   nstring = nstring +" nxn "+nextLine;
-			           }
-		           }else{
-		        	   nstring = nstring +" nxn "+nextLine;
-		           }
-	           }else if(which == FIRST_TRY){
-	        	   if(playerAnswersHashMap.containsKey(4)){
-			           if(playerAnswersHashMap.get(4).contains(rightAnswer)){
-			        	   nstring = nstring +" nxn "+nextLine;
-			           }
-		           }
-	           }else if (which == SECOND_TRY){
-	        	   if(playerAnswersHashMap.containsKey(3)){
-			           if(playerAnswersHashMap.get(3).contains(rightAnswer)){
-			        	   nstring = nstring +" nxn "+nextLine;
-			           }
-		           }
-	           }else if (which == THIRD_TRY){
-	        	   if(playerAnswersHashMap.containsKey(2)){
-			           if(playerAnswersHashMap.get(2).contains(rightAnswer)){
-			        	   nstring = nstring +" nxn "+nextLine;
-			           }
-		           }
-	           }else if (which == FOURTH_TRY){
-	        	   if(playerAnswersHashMap.containsKey(1)){
-			           if(playerAnswersHashMap.get(1).contains(rightAnswer)){
-			        	   nstring = nstring +" nxn "+nextLine;
-			           }
-		           }
-	           }
+	public ArrayList<Question> filterQuestions(int which){
+		ArrayList<Question> questionsToReturn = new ArrayList<Question>();
+		if(which == ALL){
+			List<Integer> questionToReturnIds = quiz.getTryRecord(0);
+			for(Question q : questions){
+				if(questionToReturnIds.contains(q.getId()) ){
+					questionsToReturn.add(q);
+				}
 			}
-		}		
-		return nstring;
-    }
+			return questionsToReturn;	
+		}
+		if(which == WRONG){
+			List<Integer> questionToReturnIds = quiz.getTryRecord(1);
+			
+			for(Question q : questions){
+				if((!questionToReturnIds.contains(q.getId())) && q.getDone() ){
+					questionsToReturn.add(q);
+				}
+			}
+			return questionsToReturn;	
+		}
+		List<Integer> questionToReturnIds = quiz.getTryRecord(which);
+		for(Question q : questions){
+			if(questionToReturnIds.contains(q.getId()) ){
+				questionsToReturn.add(q);
+			}
+		}
+		return questionsToReturn;
+	}
   protected XYMultipleSeriesRenderer buildBarRenderer(int[] colors) {
 	    XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
 	    renderer.setAxisTitleTextSize(16);

@@ -26,9 +26,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class ResultsFragment extends ListFragment {
-	 private ArrayList<String> month;
-	 private ArrayList<String> answer;
-
+	 private ArrayList<Question> questions;
+	 private ArrayList<String> querys = new ArrayList<String>();
+	 private ArrayList<String> answers = new ArrayList<String>();
 			 
 	public static final int UserMap_ID = 1;
 	private int whichList;
@@ -39,12 +39,15 @@ public class ResultsFragment extends ListFragment {
 	  super.onCreate(savedInstanceState);
 	    mToast = Toast.makeText( getActivity()  , "" , Toast.LENGTH_SHORT );
 		Bundle bun = getArguments();
-		month = (ArrayList<String>)bun.getSerializable("queryOnThisDataPt");
-		answer = (ArrayList<String>)bun.getSerializable("questionsOnThisDataPt");
+		questions = bun.getParcelableArrayList("questz");
+		for(Question q : questions){
+			querys.add(q.getQuery());
+			answers.add(q.getCorrectAnswer());
+		}
 		whichList = bun.getInt("whichList");
 	    ListAdapter myListAdapter = new ArrayAdapter<String>(
 	    getActivity(),
-	    android.R.layout.simple_list_item_1, month);
+	    android.R.layout.simple_list_item_1, querys);
 	    setListAdapter(myListAdapter);
 	  
 	 }
@@ -64,11 +67,11 @@ public class ResultsFragment extends ListFragment {
 			  
 		  });
 	}
-
-
 	 @Override
 	 public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	   Bundle savedInstanceState) {
+		 //launch the list of questions answered on the xth try in using th layout that corresponds
+		 //to the color for that degree of success(green = best blue 2nd best yellow worse ,red awful
 		 if(whichList == 0){
 			 return inflater.inflate(R.layout.results_fragment_green, container, false);
 		 }else if(whichList == 1){
@@ -79,10 +82,10 @@ public class ResultsFragment extends ListFragment {
 			  return inflater.inflate(R.layout.results_fragment_red, container, false);
 		 }
 	 }
-
+//when list items are clicked show the answer to the question
 	 @Override
 	 public void onListItemClick(ListView l, View v, int position, long id) {
-		 mToast.setText(answer.get(position));
+		 mToast.setText(answers.get(position));
 		 mToast.show();
 	 }
 }
