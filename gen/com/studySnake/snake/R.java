@@ -54,10 +54,10 @@ containing a value of this type.
         public static final int menu_forgot_password=0x7f070020;
         public static final int menu_logout=0x7f070021;
         public static final int menu_refresh_quiz_list=0x7f070022;
-        public static final int menu_snake_layout=0x7f07002b;
         public static final int mm=0x7f07001a;
         public static final int orTV=0x7f07000c;
         public static final int password=0x7f070009;
+        public static final int pause_button=0x7f07002b;
         public static final int play_again=0x7f070023;
         public static final int query_display=0x7f070014;
         public static final int quit=0x7f07002c;

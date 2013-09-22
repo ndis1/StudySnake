@@ -103,6 +103,7 @@ public class ScoreReport extends Activity {
     	Intent intent = new Intent(getApplicationContext(), Opening.class);
     	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	startActivity(intent);
+    	this.finish();
     }
     private void sendEmail(){
     	formatReportString();
@@ -155,6 +156,7 @@ public class ScoreReport extends Activity {
        }
        i.putExtra("whichQuiz",(Parcelable) nuQuiz);
        startActivity(i);
+       this.finish();
     }
     private void replayWrongAnswers(){
     	int ct = 0;
@@ -181,9 +183,11 @@ public class ScoreReport extends Activity {
          }
          
         	i.putExtra("whichQuiz",(Parcelable) nuQuiz);
+         	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
             startActivity(i);
-        //	quiz.reset(allUniq);
-        	startActivity(i);
+            
+            this.finish();
         }else{
         	Toast.makeText(
         		    this, 

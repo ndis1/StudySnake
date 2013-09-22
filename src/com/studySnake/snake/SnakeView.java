@@ -7,6 +7,7 @@ import java.util.Random;
 
 import com.studySnake.snake.R;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -80,7 +81,7 @@ public class SnakeView extends TileView implements OnTouchListener{
      * captured.
      */
     private long mScore = 0;
-    private long mMoveDelay = 450;
+    private static long mMoveDelay = 450;
     private int numberOfNextAnswers = 4;
     /**
      * mLastMove: tracks the absolute time when the snake last moved, and is used
@@ -116,18 +117,29 @@ public class SnakeView extends TileView implements OnTouchListener{
      * set ourselves as a target and we can use the sleep()
      * function to cause an update/invalidate to occur at a later date.
      */
-    private RefreshHandler mRedrawHandler = new RefreshHandler(SnakeView.this);
+    public RefreshHandler mRedrawHandler = new RefreshHandler(SnakeView.this);
 
    static class RefreshHandler extends Handler {
 	   SnakeView sn;
+	   boolean paused = false;
 	   RefreshHandler(SnakeView con){
 		   sn=con;
 	   }
 	   
         @Override
         public void handleMessage(Message msg) {
+        	if(msg.what == 7){
+        		paused = true;
+        	}
+        	if(msg.what == 6){
+        		paused = false;
+        	}
+        	if(!paused){
             sn.update();
             sn.invalidate();
+        	}else{
+        		this.sleep(mMoveDelay);
+        	}
         }
 
         public void sleep(long delayMillis) {
@@ -382,15 +394,17 @@ public class SnakeView extends TileView implements OnTouchListener{
     	ArrayList<Question> fromQuiz = q.getQuestions();
     	Collections.shuffle(fromQuiz);
     	questions = fromQuiz;
+    	whichRound =0;
     }
     
     //allow the game to end before all questons answered
     public void early_end(){
     	resetApples=true;
     	
-     	Intent i = new Intent(this.getContext(),ScoreReport.class);
-         i.putExtra("whichQuiz", (Parcelable)quizz);
-         this.getContext().startActivity(i);
+     	
+    }
+    public Quiz getQuiz(){
+    	return quizz;
     }
     
     /**
@@ -424,14 +438,10 @@ public class SnakeView extends TileView implements OnTouchListener{
             str = res.getText(R.string.mode_ready);
         }
         if (newMode == LOSE) {
-            Intent i = new Intent(this.getContext(),ScoreReport.class);
          	resetApples=true;
 
-            i.putExtra("whichQuiz",(Parcelable) quizz);
-
-
-
-            this.getContext().startActivity(i);
+            
+            ((Snake)this.getContext()).moveOnToScoreReport();
             
         }
 
@@ -490,11 +500,32 @@ public class SnakeView extends TileView implements OnTouchListener{
      * Handles the basic update loop, checking to see if we are in the running
      * state, determining if a move should be made, updating the snake's location.
      */
+    public int getMode(){
+    	return mMode;
+    }
     public void update() {
         if (mMode == RUNNING) {
             long now = System.currentTimeMillis();
+            /*if(whichRound >= thisQue.size()){
+            	whichRound = 0;
+            }*/
+            Log.wtf("WWWWWW",whichRound+"");
+            Question thisQue = questions.get(whichRound);
+
             if (now - mLastMove > mMoveDelay) {
-                Question thisQue = questions.get(whichRound);
+                clearTiles();
+                updateWalls();
+             if(redOn){
+          	   redCoverOff();
+          	   redOn = false;
+             }
+             if(greenOn){
+          	   greenCoverOff();
+          	   greenOn = false;
+             }
+              updateSnake();
+              mLastMove = now;//
+
                 ArrayList<String> thisAns = thisQue.getAnswers();
                 que = thisQue.getQuery();
                 String A, B, C, D;
@@ -526,18 +557,7 @@ public class SnakeView extends TileView implements OnTouchListener{
                   CanswerDisp.setText(C);
                   DanswerDisp.setText(D);
 
-                  clearTiles();
-                  updateWalls();
-               if(redOn){
-            	   redCoverOff();
-            	   redOn = false;
-               }
-               if(greenOn){
-            	   greenCoverOff();
-            	   greenOn = false;
-               }
-                updateSnake();
-                mLastMove = now;
+                
             }
             if(resetApples){
                 alreadyAdded.clear();
@@ -659,9 +679,8 @@ public class SnakeView extends TileView implements OnTouchListener{
                     if(whichRound==questions.size()){
                        whichRound =0;
                        resetApples=true;
-                       Intent i = new Intent(this.getContext(),ScoreReport.class);
-                       i.putExtra("whichQuiz",(Parcelable) quizz);
-                       this.getContext().startActivity(i);
+                    
+                    ((Snake)this.getContext()).moveOnToScoreReport();
                     }
                  
                  }else{
@@ -677,9 +696,8 @@ public class SnakeView extends TileView implements OnTouchListener{
                 	numberOfNextAnswers = questions.get(whichRound).getAnswers().size();
             	 if(whichRound==questions.size()){
                     whichRound =0;
-                   	Intent i = new Intent(this.getContext(),ScoreReport.class);
-                    i.putExtra("whichQuiz",(Parcelable) quizz);
-                    this.getContext().startActivity(i);
+                    ((Snake)this.getContext()).moveOnToScoreReport();
+
                  }
                 
             	 break;

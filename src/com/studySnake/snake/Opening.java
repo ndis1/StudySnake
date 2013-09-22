@@ -126,9 +126,11 @@ public class Opening extends ListActivity {
 		    quizClickedByUser.addTryRecord(0, q.getId());
 	    }
 	    Intent i = new Intent(context,Snake.class);
-	  
+    	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
 	    i.putExtra("whichQuiz",(Parcelable)  quizClickedByUser);
 	    startActivity(i);
+	    this.finish();
     }
     //pulls the quizzes from parse and puts them into the quiz class
     private void getQuizzesFromParse(){

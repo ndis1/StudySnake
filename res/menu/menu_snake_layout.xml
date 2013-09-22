@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menu_snake_layout"
+        android:id="@+id/pause_button"
         android:showAsAction="always"
         android:title="pause"/>
     <item android:id="@+id/quit"

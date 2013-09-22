@@ -2,14 +2,14 @@
 
 package com.studySnake.snake;
 
-import com.studySnake.snake.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
+import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -22,21 +22,26 @@ public class Snake extends Activity {
     private MediaPlayer player=null;
     private static String ICICLE_KEY = "snake-view";
     private Quiz quiz;
+    private boolean paused = false;
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
-	        case R.id.menu_snake_layout:
-	        	onPause();
+	        case R.id.pause_button:{
+	        	pauseGame();
 	        	return true;
-	        case R.id.different_quiz:
+	        }
+	        case R.id.different_quiz:{
 	        	different_quiz();
 	        	return true;
-	        case R.id.quit:
+	        }
+	        case R.id.quit:{
 	        	quit();
 	        	return true;
-	        default:
+	        }
+	        default:{
 	            return super.onOptionsItemSelected(item);
+	        }
 	    }
 	}
     @Override
@@ -45,16 +50,45 @@ public class Snake extends Activity {
         getMenuInflater().inflate(R.menu.menu_snake_layout, menu);
         return true;
     }
-    
+    public void pauseGame(){
+    	Message pause = new Message();
+    	pause.what = 7;
+    	Message unpause = new Message();
+    	unpause.what = 6;
+    	if(paused){
+        	mSnakeView.mRedrawHandler.sendMessage(unpause);
+        	paused= false;
+    	}else{
+        	mSnakeView.mRedrawHandler.sendMessage(pause);
+        	paused = true;
+    	}
+    }
     public void beep(int volume)
     {
-        player = MediaPlayer.create(getApplicationContext(), notification);
-        player.start();
+    	
+       // player.start();
     }
     public void beepOff(){
-    	player.stop();
-    	player.release();
-    	player = null;
+    	/*player.pause();
+    	player.reset();
+    	try {
+			player.setDataSource(this, notification);
+	    	player.prepare();
+
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+    	
     }//
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,11 +117,21 @@ public class Snake extends Activity {
         }
         
     }
+    @Override 
+    protected void onResume(){
+    	super.onResume();
+       // player = MediaPlayer.create(getApplicationContext(), notification);
+
+    }
 
     @Override
     protected void onPause() {
+
         super.onPause();
-        mSnakeView.setMode(SnakeView.PAUSE);
+        if(player != null){
+    		player.release();
+    		player = null;
+    	}
     }
 
     private void different_quiz(){
@@ -95,10 +139,13 @@ public class Snake extends Activity {
     		player.release();
     		player = null;
     	}
+    	//go to the opening
+    	mSnakeView.mRedrawHandler.removeCallbacksAndMessages(null);
+
     	Intent intent = new Intent(getApplicationContext(), Opening.class);
     	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	startActivity(intent);
-    	
+    	this.finish();
     }
     
     private void quit(){
@@ -107,6 +154,20 @@ public class Snake extends Activity {
     		player = null;
     	}
     	mSnakeView.early_end();
+    	moveOnToScoreReport();
+    }
+    public void moveOnToScoreReport(){
+    	if(player != null){
+    		player.release();
+    		player = null;
+    	}
+    	Intent i = new Intent(this,ScoreReport.class);
+        i.putExtra("whichQuiz", (Parcelable)mSnakeView.getQuiz());
+    	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    	mSnakeView.mRedrawHandler.removeCallbacksAndMessages(null);
+
+        startActivity(i);
+        this.finish();
     }
     
     @Override

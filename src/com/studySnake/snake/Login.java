@@ -76,7 +76,6 @@ public class Login extends BaseActivity {
 		startActivity(loginSuccess);
 		finish();
 	}
-    //
     @Subscribe
 	public void onSignInError(AuthenticateUserErrorEvent event){
 		showProgress(false, getString(R.string.login_progress_signing_in));
