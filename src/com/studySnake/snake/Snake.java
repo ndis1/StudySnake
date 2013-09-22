@@ -2,9 +2,6 @@
 
 package com.studySnake.snake;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import com.studySnake.snake.R;
 
 import android.app.Activity;
@@ -63,17 +60,14 @@ public class Snake extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intentCallFromOpening = getIntent();
-    	//String whichQuiz = intentCallFromOpening.getStringExtra("whichQuiz");
         setContentView(R.layout.snake_layout);
         mSnakeView = (SnakeView) findViewById(R.id.snake);
-       // ArrayList<Question> ques =(parseQuestionFromString(whichQuiz));
          quiz =intentCallFromOpening.getParcelableExtra("whichQuiz");
-       /* ArrayList<Question> ques = quiz.getQuestions(); 
-        Collections.shuffle(ques);*/
         mSnakeView.setQuestions(quiz);
-       // mSnakeView.setWhichQuiz(ques);
         mSnakeView.setTextView((TextView) findViewById(R.id.text));
-        mSnakeView.setTextView2((TextView) findViewById(R.id.mm));
+        mSnakeView.setTextView2((TextView) findViewById(R.id.query_display));
+        mSnakeView.setTextView3((TextView) findViewById(R.id.choice_a),(TextView) findViewById(R.id.choice_b)
+        		,(TextView) findViewById(R.id.choice_c),(TextView) findViewById(R.id.choice_d));
         mSnakeView.setOnTouchListener(mSnakeView);
         if (savedInstanceState == null) {
             // We were just launched -- set up a new gameyz
@@ -87,6 +81,7 @@ public class Snake extends Activity {
                 mSnakeView.setMode(SnakeView.PAUSE);
             }
         }
+        
     }
 
     @Override
@@ -119,29 +114,7 @@ public class Snake extends Activity {
         //Store the game state
         outState.putBundle(ICICLE_KEY, mSnakeView.saveState());
     }
-   /* public ArrayList<Question> parseQuestionFromString(String filename){
-    	ArrayList<Question> thisList = new ArrayList<Question>();
-		String [] eachQuestion = filename.split(" nxn ");
-		for(String aQuestion: eachQuestion){
-			if(aQuestion.contains(" , ")){
-	           String [] bits=  aQuestion.split(" , ");
-	           String query = bits[0];
-	           ArrayList<String> answers = new ArrayList<String>();
-	           String a1 = bits[1];
-	           String a2 = bits[2];
-	           String a3 = bits[3];
-	           String a4 = bits[4];
-	           answers.add(a1);
-	           answers.add(a2);
-	           answers.add(a3);
-	           answers.add(a4);
-	           String rightAnswer =bits[5];
-	           int id = Integer.parseInt(bits[6]);
-	           thisList.add(new Question(query,answers,rightAnswer,id));
-			}
-		}
-		return thisList;
-    }*/
+
     @Override
     public void onDestroy() {
     	if(player != null){

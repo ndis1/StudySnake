@@ -22,7 +22,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 	
-	<TextView
+		<TextView
 		 android:id="@+id/query_display"
 			android:text=""
 			android:visibility="visible"
@@ -30,7 +30,7 @@
 			android:layout_height="wrap_content"
 			android:gravity="center_horizontal"
 			android:textColor="#ff8888ff"
-			android:textSize="19sp"/>
+			android:textSize="34sp"/>
 		<TextView
 		 	android:id="@+id/choice_a"
 		    android:layout_below="@id/query_display"
@@ -40,7 +40,7 @@
 			android:layout_height="wrap_content"
 			android:gravity="center_horizontal"
 			android:textColor="#ff8888ff"
-			android:textSize="19sp"/>
+			android:textSize="34sp"/>
 			<TextView
 		 	android:id="@+id/choice_b"
 		    android:layout_below="@id/choice_a"
@@ -50,7 +50,7 @@
 			android:layout_height="wrap_content"
 			android:gravity="center_horizontal"
 			android:textColor="#ff8888ff"
-			android:textSize="19sp"/>	
+			android:textSize="34sp"/>	
 			<TextView
 		 	android:id="@+id/choice_c"
 		    android:layout_below="@id/choice_b"
@@ -60,7 +60,7 @@
 			android:layout_height="wrap_content"
 			android:gravity="center_horizontal"
 			android:textColor="#ff8888ff"
-			android:textSize="19sp"/>	
+			android:textSize="34sp"/>	
 			<TextView
 		 	android:id="@+id/choice_d"
 		    android:layout_below="@id/choice_c"
@@ -70,13 +70,13 @@
 			android:layout_height="wrap_content"
 			android:gravity="center_horizontal"
 			android:textColor="#ff8888ff"
-			android:textSize="19sp"/>
+			android:textSize="34sp"/>
 	<com.studySnake.snake.SnakeView
 	 android:id="@+id/snake"
 		android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/choice_d"
-                extra:tileSize="19dp"
+                extra:tileSize="34dp"
                 />
 	
 	<RelativeLayout
@@ -102,7 +102,7 @@
 			android:layout_centerInParent="true"
 			android:gravity="center_horizontal"
 			android:textColor="#ff8888ff"
-			android:textSize="19sp"/>
+			android:textSize="34sp"/>
 	</RelativeLayout>
 </RelativeLayout>
 

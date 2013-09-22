@@ -3,7 +3,6 @@ package com.studySnake.snake;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Random;
 
 import com.studySnake.snake.R;
@@ -11,10 +10,6 @@ import com.studySnake.snake.R;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,10 +30,6 @@ public class SnakeView extends TileView implements OnTouchListener{
 
     private static final String TAG = "SnakeView";
     private int whichRound=0;
-    private String A;
-    private String B;
-    private String C;
-    private String D;
     private String que;
 
     private boolean redOn = false;
@@ -102,6 +93,12 @@ public class SnakeView extends TileView implements OnTouchListener{
      */
     private TextView mStatusText;
     private TextView questionDisp;
+    private TextView AanswerDisp;
+    private TextView BanswerDisp;
+    private TextView CanswerDisp;
+    private TextView DanswerDisp;
+
+
     /**
      * mSnakeTrail: a list of Coordinates that make up the snake's body
      * mAppleList: the secret location of the juicy apples the snake craves.
@@ -223,12 +220,8 @@ public class SnakeView extends TileView implements OnTouchListener{
         mAppleList.clear();
         resetApples=true;
         Question thisQue = questions.get(whichRound );
-        ArrayList<String> thisAns = thisQue.getAnswers2();
          que = thisQue.getQuery();
-         A = thisAns.get(0);
-         B = thisAns.get(1);
-         C = thisAns.get(2);
-         D = thisAns.get(3);
+        
         // For now we're just going to load up a short default eastbound snake
         // that's just turned north
 
@@ -365,6 +358,18 @@ public class SnakeView extends TileView implements OnTouchListener{
     }
     public void setTextView2(TextView newView){
         questionDisp = newView;
+        questionDisp.setLines(3);
+
+    }
+    public void setTextView3(TextView A,TextView B,TextView C,TextView D){
+        AanswerDisp = A;
+        AanswerDisp.setLines(1);
+        BanswerDisp = B;
+        BanswerDisp.setLines(1);
+        CanswerDisp = C;
+        CanswerDisp.setLines(1);
+        DanswerDisp = D;
+        DanswerDisp.setLines(1);
 
     }
     
@@ -382,6 +387,7 @@ public class SnakeView extends TileView implements OnTouchListener{
     //allow the game to end before all questons answered
     public void early_end(){
     	resetApples=true;
+    	
      	Intent i = new Intent(this.getContext(),ScoreReport.class);
          i.putExtra("whichQuiz", (Parcelable)quizz);
          this.getContext().startActivity(i);
@@ -400,6 +406,11 @@ public class SnakeView extends TileView implements OnTouchListener{
         if (newMode == RUNNING & oldMode != RUNNING) {
             mStatusText.setVisibility(View.INVISIBLE);
             questionDisp.setVisibility(VISIBLE);
+            AanswerDisp.setVisibility(VISIBLE);
+            BanswerDisp.setVisibility(VISIBLE);
+            CanswerDisp.setVisibility(VISIBLE);
+            DanswerDisp.setVisibility(VISIBLE);
+
             update();
             return;
         }
@@ -486,45 +497,35 @@ public class SnakeView extends TileView implements OnTouchListener{
                 Question thisQue = questions.get(whichRound);
                 ArrayList<String> thisAns = thisQue.getAnswers();
                 que = thisQue.getQuery();
+                String A, B, C, D;
+                A = B = C = D = "";
                 for(int sz = 0 ; sz < thisAns.size() ; sz++){
                 	switch(sz){
-	                	 case 0 : A = thisAns.get(sz);
-	                	 case 1 : B = thisAns.get(sz);
-	                	 case 2 : C = thisAns.get(sz);
-	                	 case 3 : D = thisAns.get(sz);
+	                	 case 0 :{ A = "A : " + thisAns.get(sz);
+	                	 	break;
+	                	 }
+	                	 case 1 :{ B = "B : " +  thisAns.get(sz);
+	                	 break;
+	                	 
+	                	 }
+	                	 case 2 :{ C = "C : " +   thisAns.get(sz);
+	                	 break;
+	                	 
+	                	 }
+	                	 case 3 :{ D = "D : " +   thisAns.get(sz);
+	                	 break;
+	                	 
+	                	 }
                 	 }
                  }
             	 String qdisp = que;
-            	 String nxt = "";
-                 for(int s = 0 ; s < 4 ; s++){
-                	 switch(s){
-                	 	case 0 : nxt = nxt + "\nA: " + A;
-                	 	break;
-                	 	case 1 :
-                		  if(numberOfNextAnswers==1){
-                    		  nxt = nxt +"\n      ";
-                		  }else{
-                			  nxt = nxt +"\nB: " + B;
-                		  }
-                	  break;
-                	  case 2 : 
-                		  if(numberOfNextAnswers<3){
-                    		  nxt = nxt +"\n        ";
-                		  }else{
-                			  nxt = nxt + "\nC: " + C ;
-                		  }
-                	  break;
-                	  case 3 :
-                		  if(numberOfNextAnswers!=4){
-                    		  nxt = nxt +"\n        ";
-                		  }else{
-                			  nxt = nxt + "\nD: " + D ;
-                		  }
-                	  break;
-                	  }
-                  }
-            	  qdisp = qdisp + nxt;
-                  questionDisp.setText(qdisp);
+                 
+                  questionDisp.setText(""+qdisp);
+                  AanswerDisp.setText(A);
+                  BanswerDisp.setText(B);
+                  CanswerDisp.setText(C);
+                  DanswerDisp.setText(D);
+
                   clearTiles();
                   updateWalls();
                if(redOn){
@@ -651,8 +652,6 @@ public class SnakeView extends TileView implements OnTouchListener{
             		greenCoverOn();
             		greenOn = true;
                  	mScore= mScore+1;
-                  //  preQue.setTryGottenOn(4-numberOfNextAnswers);
-                  //  preQue.setDone(true);
                     mMoveDelay *= 0.9;
                     growSnake = true;
                     preQue.setDone(true);

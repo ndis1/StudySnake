@@ -2,13 +2,16 @@ package com.studySnake.snake;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 
 public class Question implements Parcelable, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String myQuery;
 	private ArrayList<String> myAnswers;
 	private ArrayList<String> resetAnswers;

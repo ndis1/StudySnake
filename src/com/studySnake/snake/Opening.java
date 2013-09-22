@@ -39,6 +39,9 @@ public class Opening extends ListActivity {
 	    	case R.id.menu_logout:
 	        	parseLogout();
 	        	return true;
+	    	case R.id.menu_refresh_quiz_list:
+	        	refreshQuizzesList();
+	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
@@ -47,11 +50,10 @@ public class Opening extends ListActivity {
     //log out of parse and kill all activities before the top activity
     public void parseLogout(){
          ArrayList<Quiz> quizzesEmpty = new ArrayList<Quiz>();
-
+         //wipe the cache
     	try {
 			InternalStorage.writeObject(this, CACHE_KEY,quizzesEmpty);
 		} catch (IOException e) {
-			Log.wtf("WWWWWWWWRITERROR", "NO WRITE");
 			e.printStackTrace();
 		}
     	ParseUser.logOut();
@@ -59,6 +61,18 @@ public class Opening extends ListActivity {
     	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
         this.finish();
+    }
+    public void refreshQuizzesList(){
+    	ArrayList<Quiz> quizzesEmpty = new ArrayList<Quiz>();
+        //wipe the cache
+   	try {
+			InternalStorage.writeObject(this, CACHE_KEY,quizzesEmpty);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+   		quizzes.clear();
+   		getQuizzesFromParse();
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -71,7 +85,6 @@ public class Opening extends ListActivity {
         super.onCreate(savedInstanceState);
     	context = this;
         setContentView(R.layout.opening_layout);
-       // getQuizzesFromParse();
 
    	   try {
 		List<Quiz> cachedEntries = (List<Quiz>) InternalStorage.readObject(this, CACHE_KEY);
@@ -96,22 +109,14 @@ public class Opening extends ListActivity {
         
     }
     private void cacheQuizzes(){
-    	 Log.wtf("WWWWWW", "Starting");
          try {
       	   // Save the list of entries to internal storage
       	   InternalStorage.writeObject(this, CACHE_KEY, quizzes);
-      	 Log.wtf("WWWWWW", "Starting");
-
-      	   /*// Retrieve the list from internal storage
-      	     Log.wtf("entries", cachedEntries.size()+"SIZE");
-
-      	   // Display the items from the list retrieved.
-      	   for (Quiz entry : cachedEntries) {
-      	     Log.wtf("entries", entry.getName());
-      	   }*/
+      	
       	} catch (IOException e) {
       	   Log.wtf("io excep", e.getMessage());
       	}
+
     }
     protected void onListItemClick(ListView l, View v, int position, long id) {
 	    super.onListItemClick(l, v, position, id);

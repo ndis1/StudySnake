@@ -8,11 +8,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Quiz implements Serializable,Parcelable {
+	
+	private static final long serialVersionUID = 1L;
 	private ArrayList<Question> questions;
 	private String name;
 	private int numberOfQuestions;
 	private List<Integer> zerothTry;
-
 	private List<Integer> firstTry;
 	private List<Integer> secondTry;
 	private List<Integer> thirdTry;
