@@ -132,6 +132,10 @@ public class Opening extends ListActivity {
 	    startActivity(i);
 	    this.finish();
     }
+    @Override
+    public void onBackPressed(){
+    	//back should do nothing
+    }
     //pulls the quizzes from parse and puts them into the quiz class
     private void getQuizzesFromParse(){
     	ParseQuery<ParseObject> query = ParseQuery.getQuery("Todo");

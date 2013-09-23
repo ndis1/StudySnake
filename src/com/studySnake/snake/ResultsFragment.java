@@ -12,6 +12,7 @@ import android.app.DialogFragment;
 import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -58,29 +59,42 @@ public class ResultsFragment extends ListFragment {
 		  getListView().setCacheColorHint(Color.RED);
 
 		  l1.setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-	        	  ((ScoreReport) getActivity()).bdlsvis();
-				
+	        	  ((ScoreReport) getActivity()).closeResultsFragment();
 			}
-			  
 		  });
 	}
 	 @Override
 	 public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	   Bundle savedInstanceState) {
+		 
 		 //launch the list of questions answered on the xth try in using th layout that corresponds
 		 //to the color for that degree of success(green = best blue 2nd best yellow worse ,red awful
-		 if(whichList == 0){
-			 return inflater.inflate(R.layout.results_fragment_green, container, false);
-		 }else if(whichList == 1){
-			  return inflater.inflate(R.layout.results_fragment_blue, container, false);
-		 }else if(whichList == 2){
-			  return inflater.inflate(R.layout.results_fragment_yellow, container, false);
-		 }else {
-			  return inflater.inflate(R.layout.results_fragment_red, container, false);
-		 }
+		 View viewForResultsFragment =  inflater.inflate(R.layout.results_fragment, container, false);
+		
+		 return viewForResultsFragment;
+	 }
+	 @Override
+	 public void onActivityCreated (Bundle savedInstanceState){
+		 super.onActivityCreated(savedInstanceState);
+		 Resources res = getResources();
+		 View listView = getListView();
+		 View backgroundView =  getActivity().findViewById(R.id.back);
+			 if(whichList == 0){				 
+				 listView.setBackgroundColor(res.getColor(R.color.green));
+				 backgroundView.setBackgroundColor(res.getColor(R.color.green_background));
+
+			 }else if(whichList == 1){
+				 listView.setBackgroundColor(res.getColor(R.color.blue));
+				 backgroundView.setBackgroundColor(res.getColor(R.color.blue_background));
+			}else if(whichList == 2){
+				 listView.setBackgroundColor(res.getColor(R.color.yellow));
+				backgroundView.setBackgroundColor(res.getColor(R.color.yellow_background));
+			 }else {
+				 listView.setBackgroundColor(res.getColor(R.color.red));
+				 backgroundView.setBackgroundColor(res.getColor(R.color.red_background));
+			 }
 	 }
 //when list items are clicked show the answer to the question
 	 @Override

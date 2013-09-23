@@ -5,10 +5,10 @@
     
     package="com.studySnake.snake">
     <uses-sdk
-        android:minSdkVersion="11" 
+        android:minSdkVersion="14" 
    		android:targetSdkVersion="18" />
    <supports-screens 
-        android:xlargeScreens="true"
+        android:xlargeScreens="false"
         android:largeScreens="true"
         android:normalScreens="false" 
         android:smallScreens="false"

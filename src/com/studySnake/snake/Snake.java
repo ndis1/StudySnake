@@ -16,10 +16,8 @@ import android.widget.TextView;
 
 public class Snake extends Activity {
 
-    private Uri notification = RingtoneManager
-            .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    
     private SnakeView mSnakeView;
-    private MediaPlayer player=null;
     private static String ICICLE_KEY = "snake-view";
     private Quiz quiz;
     private boolean paused = false;
@@ -27,7 +25,7 @@ public class Snake extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
-	        case R.id.pause_button:{
+	        case R.id.pause_button:{//
 	        	pauseGame();
 	        	return true;
 	        }
@@ -36,7 +34,7 @@ public class Snake extends Activity {
 	        	return true;
 	        }
 	        case R.id.quit:{
-	        	quit();
+	        	moveOnToScoreReport();
 	        	return true;
 	        }
 	        default:{
@@ -63,33 +61,11 @@ public class Snake extends Activity {
         	paused = true;
     	}
     }
-    public void beep(int volume)
-    {
-    	
-       // player.start();
+    
+    @Override
+    public void onBackPressed(){
+    	//back should do nothing
     }
-    public void beepOff(){
-    	/*player.pause();
-    	player.reset();
-    	try {
-			player.setDataSource(this, notification);
-	    	player.prepare();
-
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-    	
-    }//
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,54 +93,29 @@ public class Snake extends Activity {
         }
         
     }
-    @Override 
-    protected void onResume(){
-    	super.onResume();
-       // player = MediaPlayer.create(getApplicationContext(), notification);
-
-    }
-
-    @Override
-    protected void onPause() {
-
-        super.onPause();
-        if(player != null){
-    		player.release();
-    		player = null;
-    	}
-    }
+   
 
     private void different_quiz(){
-    	if(player != null){
-    		player.release();
-    		player = null;
-    	}
-    	//go to the opening
-    	mSnakeView.mRedrawHandler.removeCallbacksAndMessages(null);
-
+    	
+    	Message kill = new Message();
+    	kill.what = 3;
+    	mSnakeView.mRedrawHandler.sendMessage(kill);
     	Intent intent = new Intent(getApplicationContext(), Opening.class);
     	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	startActivity(intent);
     	this.finish();
     }
     
-    private void quit(){
-    	if(player != null){
-    		player.release();
-    		player = null;
-    	}
-    	mSnakeView.early_end();
-    	moveOnToScoreReport();
-    }
+    
     public void moveOnToScoreReport(){
-    	if(player != null){
-    		player.release();
-    		player = null;
-    	}
+    	
     	Intent i = new Intent(this,ScoreReport.class);
         i.putExtra("whichQuiz", (Parcelable)mSnakeView.getQuiz());
     	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    	mSnakeView.mRedrawHandler.removeCallbacksAndMessages(null);
+    	Message kill = new Message();
+    	kill.what = 3;
+    	mSnakeView.mRedrawHandler.sendMessage(kill);
+
 
         startActivity(i);
         this.finish();
@@ -176,12 +127,5 @@ public class Snake extends Activity {
         outState.putBundle(ICICLE_KEY, mSnakeView.saveState());
     }
 
-    @Override
-    public void onDestroy() {
-    	if(player != null){
-    		player.release();
-    		player = null;
-    	}
-        super.onDestroy();
-    }
+   
 }

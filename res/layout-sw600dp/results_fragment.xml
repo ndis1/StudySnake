@@ -8,7 +8,7 @@
          android:paddingRight="38dp"
          android:paddingBottom="68dp"
          android:paddingTop="68dp"
-         android:background="#50ffc125"
+         android:background="#501ac152"
          android:id="@+id/back"  
          
          >
@@ -18,7 +18,7 @@
                android:layout_height="0dp"
                android:layout_weight="1"
                android:drawSelectorOnTop="true"
-               android:background="#ffc125"/>
+               android:background="#1ac152"/>
 
      <TextView android:id="@id/android:empty"
                android:layout_width="match_parent"

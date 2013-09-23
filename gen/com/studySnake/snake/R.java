@@ -20,6 +20,16 @@ containing a value of this type.
          */
         public static final int tileSize=0x7f010000;
     }
+    public static final class color {
+        public static final int blue=0x7f040003;
+        public static final int blue_background=0x7f040002;
+        public static final int green=0x7f040001;
+        public static final int green_background=0x7f040000;
+        public static final int red=0x7f040007;
+        public static final int red_background=0x7f040006;
+        public static final int yellow=0x7f040005;
+        public static final int yellow_background=0x7f040004;
+    }
     public static final class drawable {
         public static final int aim=0x7f020000;
         public static final int badsnakepic=0x7f020001;
@@ -31,52 +41,52 @@ containing a value of this type.
         public static final int yellowstar=0x7f020007;
     }
     public static final class id {
-        public static final int bac_dim_lasn=0x7f07001d;
-        public static final int bac_dim_lasn_green=0x7f07001e;
-        public static final int bac_dim_layout=0x7f070012;
-        public static final int back=0x7f07000f;
-        public static final int btnCreateAccount=0x7f070007;
-        public static final int chart=0x7f070011;
-        public static final int choice_a=0x7f070015;
-        public static final int choice_b=0x7f070016;
-        public static final int choice_c=0x7f070017;
-        public static final int choice_d=0x7f070018;
-        public static final int different_quiz=0x7f07002d;
-        public static final int edit_name=0x7f070001;
-        public static final int email_results=0x7f07002a;
-        public static final int etEmail=0x7f070002;
-        public static final int etPassword=0x7f070005;
-        public static final int etPasswordConfirm=0x7f070006;
-        public static final int etUsername=0x7f070004;
-        public static final int fragment_container=0x7f070013;
-        public static final int login=0x7f07000a;
-        public static final int main_view=0x7f070000;
-        public static final int menu_forgot_password=0x7f070020;
-        public static final int menu_logout=0x7f070021;
-        public static final int menu_refresh_quiz_list=0x7f070022;
-        public static final int mm=0x7f07001a;
-        public static final int orTV=0x7f07000c;
-        public static final int password=0x7f070009;
-        public static final int pause_button=0x7f07002b;
-        public static final int play_again=0x7f070023;
-        public static final int query_display=0x7f070014;
-        public static final int quit=0x7f07002c;
-        public static final int register_button=0x7f07000d;
-        public static final int replay_these_answers_1=0x7f070024;
-        public static final int replay_these_answers_2=0x7f070026;
-        public static final int replay_these_answers_3=0x7f070027;
-        public static final int replay_these_answers_4=0x7f070028;
-        public static final int replay_wrong_answers=0x7f070029;
-        public static final int return_to_opening=0x7f070025;
-        public static final int sign_in_button=0x7f07000b;
-        public static final int snake=0x7f070019;
-        public static final int statusView=0x7f07000e;
-        public static final int status_message=0x7f07001f;
-        public static final int submitButton=0x7f070003;
-        public static final int text=0x7f07001c;
-        public static final int textA=0x7f07001b;
-        public static final int username=0x7f070008;
-        public static final int view_graph=0x7f070010;
+        public static final int bac_dim_lasn=0x7f08001d;
+        public static final int bac_dim_lasn_green=0x7f08001e;
+        public static final int bac_dim_layout=0x7f080012;
+        public static final int back=0x7f08000f;
+        public static final int btnCreateAccount=0x7f080007;
+        public static final int chart=0x7f080011;
+        public static final int choice_a=0x7f080015;
+        public static final int choice_b=0x7f080016;
+        public static final int choice_c=0x7f080017;
+        public static final int choice_d=0x7f080018;
+        public static final int different_quiz=0x7f08002d;
+        public static final int edit_name=0x7f080001;
+        public static final int email_results=0x7f08002a;
+        public static final int etEmail=0x7f080002;
+        public static final int etPassword=0x7f080005;
+        public static final int etPasswordConfirm=0x7f080006;
+        public static final int etUsername=0x7f080004;
+        public static final int fragment_container=0x7f080013;
+        public static final int login=0x7f08000a;
+        public static final int main_view=0x7f080000;
+        public static final int menu_forgot_password=0x7f080020;
+        public static final int menu_logout=0x7f080021;
+        public static final int menu_refresh_quiz_list=0x7f080022;
+        public static final int mm=0x7f08001a;
+        public static final int orTV=0x7f08000c;
+        public static final int password=0x7f080009;
+        public static final int pause_button=0x7f08002b;
+        public static final int play_again=0x7f080023;
+        public static final int query_display=0x7f080014;
+        public static final int quit=0x7f08002c;
+        public static final int register_button=0x7f08000d;
+        public static final int replay_these_answers_1=0x7f080024;
+        public static final int replay_these_answers_2=0x7f080026;
+        public static final int replay_these_answers_3=0x7f080027;
+        public static final int replay_these_answers_4=0x7f080028;
+        public static final int replay_wrong_answers=0x7f080029;
+        public static final int return_to_opening=0x7f080025;
+        public static final int sign_in_button=0x7f08000b;
+        public static final int snake=0x7f080019;
+        public static final int statusView=0x7f08000e;
+        public static final int status_message=0x7f08001f;
+        public static final int submitButton=0x7f080003;
+        public static final int text=0x7f08001c;
+        public static final int textA=0x7f08001b;
+        public static final int username=0x7f080008;
+        public static final int view_graph=0x7f080010;
     }
     public static final class layout {
         public static final int activity_login_layout=0x7f030000;
@@ -85,8 +95,8 @@ containing a value of this type.
         public static final int fragment_login=0x7f030003;
         public static final int layout_default_status=0x7f030004;
         public static final int opening_layout=0x7f030005;
-        public static final int results_fragment_blue=0x7f030006;
-        public static final int results_fragment_green=0x7f030007;
+        public static final int results_fragment=0x7f030006;
+        public static final int results_fragment_blue=0x7f030007;
         public static final int results_fragment_red=0x7f030008;
         public static final int results_fragment_yellow=0x7f030009;
         public static final int score_report_layout=0x7f03000a;
@@ -94,56 +104,56 @@ containing a value of this type.
         public static final int view_status=0x7f03000c;
     }
     public static final class menu {
-        public static final int lmenu_login_layout=0x7f060000;
-        public static final int menu_opening_layout=0x7f060001;
-        public static final int menu_replay_these_answers_1=0x7f060002;
-        public static final int menu_replay_these_answers_2=0x7f060003;
-        public static final int menu_replay_these_answers_3=0x7f060004;
-        public static final int menu_replay_these_answers_4=0x7f060005;
-        public static final int menu_score_rep_layout=0x7f060006;
-        public static final int menu_snake_layout=0x7f060007;
+        public static final int lmenu_login_layout=0x7f070000;
+        public static final int menu_opening_layout=0x7f070001;
+        public static final int menu_replay_these_answers_1=0x7f070002;
+        public static final int menu_replay_these_answers_2=0x7f070003;
+        public static final int menu_replay_these_answers_3=0x7f070004;
+        public static final int menu_replay_these_answers_4=0x7f070005;
+        public static final int menu_score_rep_layout=0x7f070006;
+        public static final int menu_snake_layout=0x7f070007;
     }
     public static final class string {
-        public static final int action_register=0x7f040009;
-        public static final int action_sign_in_register=0x7f040007;
-        public static final int action_sign_in_short=0x7f040008;
-        public static final int changing_fragments=0x7f04001f;
-        public static final int confirmPasswordHint=0x7f04001d;
-        public static final int createAccount=0x7f040019;
-        public static final int default_progress_message=0x7f040015;
-        public static final int emailHint=0x7f04001a;
-        public static final int error_duplicate_email=0x7f04000f;
-        public static final int error_duplicate_username=0x7f040010;
-        public static final int error_field_required=0x7f040014;
-        public static final int error_incorrect_password=0x7f040011;
-        public static final int error_invalid_confirm_password=0x7f040013;
-        public static final int error_invalid_email=0x7f04000e;
-        public static final int error_invalid_password=0x7f040012;
-        public static final int hello_world=0x7f040021;
-        public static final int login_progress_password_email=0x7f04000d;
-        public static final int login_progress_signing_in=0x7f04000c;
-        public static final int menu_forgot_password=0x7f04000a;
-        public static final int menu_logout=0x7f04000b;
-        public static final int menu_settings=0x7f040022;
-        public static final int mode_lose_prefix=0x7f040002;
-        public static final int mode_lose_suffix=0x7f040003;
-        public static final int mode_pause=0x7f040001;
-        public static final int mode_ready=0x7f040000;
-        public static final int orText=0x7f040018;
-        public static final int passwordHint=0x7f04001c;
+        public static final int action_register=0x7f050009;
+        public static final int action_sign_in_register=0x7f050007;
+        public static final int action_sign_in_short=0x7f050008;
+        public static final int changing_fragments=0x7f05001f;
+        public static final int confirmPasswordHint=0x7f05001d;
+        public static final int createAccount=0x7f050019;
+        public static final int default_progress_message=0x7f050015;
+        public static final int emailHint=0x7f05001a;
+        public static final int error_duplicate_email=0x7f05000f;
+        public static final int error_duplicate_username=0x7f050010;
+        public static final int error_field_required=0x7f050014;
+        public static final int error_incorrect_password=0x7f050011;
+        public static final int error_invalid_confirm_password=0x7f050013;
+        public static final int error_invalid_email=0x7f05000e;
+        public static final int error_invalid_password=0x7f050012;
+        public static final int hello_world=0x7f050021;
+        public static final int login_progress_password_email=0x7f05000d;
+        public static final int login_progress_signing_in=0x7f05000c;
+        public static final int menu_forgot_password=0x7f05000a;
+        public static final int menu_logout=0x7f05000b;
+        public static final int menu_settings=0x7f050022;
+        public static final int mode_lose_prefix=0x7f050002;
+        public static final int mode_lose_suffix=0x7f050003;
+        public static final int mode_pause=0x7f050001;
+        public static final int mode_ready=0x7f050000;
+        public static final int orText=0x7f050018;
+        public static final int passwordHint=0x7f05001c;
         /**  Strings related to login 
          */
-        public static final int prompt_email=0x7f040005;
-        public static final int prompt_password=0x7f040006;
+        public static final int prompt_email=0x7f050005;
+        public static final int prompt_password=0x7f050006;
         /**  Login/Account creation screen 
          */
-        public static final int signIn=0x7f040016;
-        public static final int snake_layout_text_text=0x7f040004;
-        public static final int submit=0x7f040017;
-        public static final int title_activity_create_account=0x7f040020;
-        public static final int title_activity_launcher=0x7f04001e;
-        public static final int title_activity_main=0x7f040023;
-        public static final int usernameHint=0x7f04001b;
+        public static final int signIn=0x7f050016;
+        public static final int snake_layout_text_text=0x7f050004;
+        public static final int submit=0x7f050017;
+        public static final int title_activity_create_account=0x7f050020;
+        public static final int title_activity_launcher=0x7f05001e;
+        public static final int title_activity_main=0x7f050023;
+        public static final int usernameHint=0x7f05001b;
     }
     public static final class style {
         /** 
@@ -156,12 +166,12 @@ containing a value of this type.
             backward-compatibility can go here.
         
          */
-        public static final int AppBaseTheme=0x7f050000;
+        public static final int AppBaseTheme=0x7f060000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f050001;
-        public static final int LoginFormContainer=0x7f050002;
+        public static final int AppTheme=0x7f060001;
+        public static final int LoginFormContainer=0x7f060002;
     }
     public static final class styleable {
         /** Attributes that can be used with a TileView.

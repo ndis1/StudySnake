@@ -1,9 +1,7 @@
 
 package com.studySnake.snake;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -11,17 +9,10 @@ import org.achartengine.chart.BarChart.Type;
 import org.achartengine.model.CategorySeries;
 import org.achartengine.model.SeriesSelection;
 import org.achartengine.model.XYMultipleSeriesDataset;
-import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
-import org.achartengine.renderer.XYSeriesRenderer;
-
-import com.parse.ParseUser;
-import com.studySnake.snake.R;
-import com.studySnake.snake.model.UserManager;
 
 import android.app.ActionBar.LayoutParams;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,18 +21,18 @@ import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class ScoreReport extends Activity {
+import com.parse.ParseUser;
+
+public class ScoreReport extends  FragmentActivity {
 	private static final int SERIES_NR = 1;
     private ArrayList<Question> questions;
     private Context context;
@@ -50,7 +41,8 @@ public class ScoreReport extends Activity {
     /** The main renderer that includes all the renderers customizing a chart. */
     private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
     /** The most recently added series. */
-   
+    private  boolean fragLive = false;
+    private int whichFrag = 1;
     private RelativeLayout back_dim_layout;
     private GraphicalView mChartView;
     private LinearLayout layout3;
@@ -196,6 +188,10 @@ public class ScoreReport extends Activity {
         }
     }
     @Override
+    public void onBackPressed(){
+    	//back should do nothing
+    }
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         switch(whichTry){
@@ -218,9 +214,8 @@ public class ScoreReport extends Activity {
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	context = this;
         super.onCreate(savedInstanceState);
-//
+        context = this;
         setContentView(R.layout.score_report_layout);
         back_dim_layout = (RelativeLayout) findViewById(R.id.bac_dim_layout);
         intentCallFromSnake = getIntent();
@@ -231,9 +226,8 @@ public class ScoreReport extends Activity {
         	qi.reset();
         	questions.add(qi);
         }
-       
         if (mChartView == null) {
-             layout3 = (LinearLayout) findViewById(R.id.chart);
+            layout3 = (LinearLayout) findViewById(R.id.chart);
             mRenderer = getBarRenderer();
             mDataset = getBarDataset();
             mChartView = ChartFactory.getBarChartView(this, mDataset, mRenderer, Type.DEFAULT);
@@ -241,21 +235,13 @@ public class ScoreReport extends Activity {
             mRenderer.setClickEnabled(true);
             mRenderer.setSelectableBuffer(10);
             mChartView.setOnClickListener(new View.OnClickListener() {
-              public void onClick(View v) {
-            	 
+            public void onClick(View v) {
                 // handle the click event on the chart
                 SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
                 if (seriesSelection == null) {
                   Toast.makeText(getApplicationContext(), "No chart element", Toast.LENGTH_SHORT).show();
                 } else {
-                	Bundle bundle = new Bundle();
-        		    bundle.putInt("whichList", seriesSelection.getPointIndex());
-        		    setReplayMenu( seriesSelection.getPointIndex()+1);
-        		    searchRadiusQuery = new ResultsFragment();
-        		    searchRadiusQuery.setArguments(bundle);
-        		    bundle.putParcelableArrayList("questz", filterQuestions(seriesSelection.getPointIndex()+1));
-        		    getFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, searchRadiusQuery).commit();
+                	launchFragment(seriesSelection.getPointIndex());
                 }
               }
             });
@@ -264,15 +250,29 @@ public class ScoreReport extends Activity {
           } else {
             mChartView.repaint();
           }
-        
     }
+    
+    private void launchFragment(int whichClicked){
+    	whichFrag = whichClicked;
+    	fragLive = true;
+    	Bundle bundle = new Bundle();
+	    bundle.putInt("whichList", whichClicked);
+	    setReplayMenu( whichClicked+1);
+	    searchRadiusQuery = new ResultsFragment();
+	    searchRadiusQuery.setArguments(bundle);
+	    bundle.putParcelableArrayList("questz", filterQuestions(whichClicked+1));
+	    getFragmentManager().beginTransaction().add(R.id.fragment_container, searchRadiusQuery).commit();
+    }
+    
     public void setReplayMenu(int which){
     	whichTry = which;
     	this.invalidateOptionsMenu();
     }
-    public void bdlsvis(){
+    public void closeResultsFragment(){
+    	
   	  getFragmentManager().beginTransaction().remove(searchRadiusQuery).commit();
   	  whichTry = WRONG;
+  	  fragLive = false;
   	  this.invalidateOptionsMenu();
     }
     private XYMultipleSeriesDataset getBarDataset() {
@@ -326,23 +326,11 @@ public class ScoreReport extends Activity {
 		reportString = greeting + firstRight + secondRight + thirdRight + fourthRight;
 	}
 	public String reportFilter(ArrayList<Question> in){
-		/*String out = "";
-		String [] n = in.split(" nxn ");
-		int ct = 0;
-		for(String nextLine: n){
-			String question = "";
-			String rightAnswer = "";
-			if(nextLine.contains(" , ")){
-	           String [] bits=  nextLine.split(" , ");
-	            question = bits[0];
-	            rightAnswer =bits[5];
-			}
-			if(question != ""){
-				out = out + " "+ ct + " " +"Question : "+ question +" Answer : "+ rightAnswer +"\n";
-			}
-			ct ++;
-		}*/
-		return "";
+		String string_to_return = "";
+		for(Question q : in){
+			string_to_return = string_to_return + "Question:  \n" + q.getQuery() + "\nAnswer: " + q.getCorrectAnswer() + " ";
+		}
+		return string_to_return;
 	}
 	public ArrayList<Question> filterQuestions(int which){
 		ArrayList<Question> questionsToReturn = new ArrayList<Question>();
@@ -387,4 +375,36 @@ public class ScoreReport extends Activity {
 	    }
 	    return renderer;
 	  }
+  @Override
+  public void onPause(){
+	  super.onPause();
+	  if(fragLive){
+		  closeResultsFragment();
+		  fragLive = true;
+	  }
+  }
+  @Override
+  protected void onResumeFragments(){
+	  super.onResumeFragments();
+	  if(fragLive){
+		  launchFragment(whichFrag);
+	  }
+  }
+  @Override
+  protected void onSaveInstanceState(Bundle icicle) {
+	  super.onSaveInstanceState(icicle);
+	  
+	  icicle.putBoolean("fragLive", fragLive);
+	  icicle.putInt("whichFrag", whichFrag);
+	}
+  @Override
+  protected void onRestoreInstanceState(Bundle icicle){
+	  super.onRestoreInstanceState(icicle);
+
+	  if(icicle != null){
+		  fragLive = icicle.getBoolean("fragLive");
+		  whichFrag = icicle.getInt("whichFrag");
+		 
+	  }
+  }
 }

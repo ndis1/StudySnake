@@ -1,6 +1,7 @@
 
 package com.studySnake.snake;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -120,25 +121,35 @@ public class SnakeView extends TileView implements OnTouchListener{
     public RefreshHandler mRedrawHandler = new RefreshHandler(SnakeView.this);
 
    static class RefreshHandler extends Handler {
-	   SnakeView sn;
+	   private final WeakReference<SnakeView> snWeak;
+
 	   boolean paused = false;
 	   RefreshHandler(SnakeView con){
-		   sn=con;
+		   
+		   snWeak= new WeakReference<SnakeView>(con);
 	   }
 	   
         @Override
         public void handleMessage(Message msg) {
-        	if(msg.what == 7){
-        		paused = true;
-        	}
-        	if(msg.what == 6){
-        		paused = false;
-        	}
-        	if(!paused){
-            sn.update();
-            sn.invalidate();
-        	}else{
-        		this.sleep(mMoveDelay);
+        	SnakeView sn = snWeak.get();
+        	if(sn != null){
+	        	if(msg.what == 3){
+	        		this.removeMessages(0);
+	        	}else{
+		        	if(msg.what == 7){
+		        		paused = true;
+		        	}
+		        	if(msg.what == 6){
+		        		paused = false;
+		        	}
+		        	if(!paused){
+		        		
+		        		sn.update();
+		        		sn.invalidate();
+		        	}else{
+		        		this.sleep(mMoveDelay);
+		        	}
+	        	}
         	}
         }
 
@@ -397,12 +408,7 @@ public class SnakeView extends TileView implements OnTouchListener{
     	whichRound =0;
     }
     
-    //allow the game to end before all questons answered
-    public void early_end(){
-    	resetApples=true;
-    	
-     	
-    }
+    
     public Quiz getQuiz(){
     	return quizz;
     }
@@ -504,12 +510,15 @@ public class SnakeView extends TileView implements OnTouchListener{
     	return mMode;
     }
     public void update() {
+        Log.wtf("UPDATE CALLED", "WWWHAT");
+
         if (mMode == RUNNING) {
             long now = System.currentTimeMillis();
-            /*if(whichRound >= thisQue.size()){
+            //in case update is called an extra time 
+            if(whichRound >= questions.size()){
             	whichRound = 0;
-            }*/
-            Log.wtf("WWWWWW",whichRound+"");
+            }
+            Log.wtf("SNAKEVIEW WHICHR",whichRound+"");
             Question thisQue = questions.get(whichRound);
 
             if (now - mLastMove > mMoveDelay) {
@@ -808,12 +817,10 @@ public class SnakeView extends TileView implements OnTouchListener{
     
     public void greenCoverOn(){
       	 ((Snake)getContext()).findViewById(R.id.bac_dim_lasn_green).setVisibility(RelativeLayout.VISIBLE);
-      	 ((Snake)getContext()).beep(10);
     }
     
     public void greenCoverOff(){
         ((Snake)getContext()).findViewById(R.id.bac_dim_lasn_green).setVisibility(RelativeLayout.GONE);
-        ((Snake)getContext()).beepOff();
     }
     
 	@Override
