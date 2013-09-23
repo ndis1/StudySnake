@@ -379,12 +379,13 @@ public class SnakeView extends TileView implements OnTouchListener{
     public void setTextView(TextView newView) {
         mStatusText = newView;
     }
-    public void setTextView2(TextView newView){
+    public void setQueryDisplay(TextView newView){
         questionDisp = newView;
         questionDisp.setLines(3);
 
     }
-    public void setTextView3(TextView A,TextView B,TextView C,TextView D){
+    
+    public void setAnswersDisplay(TextView A,TextView B,TextView C,TextView D){
         AanswerDisp = A;
         AanswerDisp.setLines(1);
         BanswerDisp = B;

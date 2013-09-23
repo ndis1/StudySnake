@@ -71,16 +71,7 @@ public class ScoreReport extends  FragmentActivity {
 	        case R.id.replay_wrong_answers:
 	        	replayWrongAnswers();
 	        	return true;
-	        case R.id.replay_these_answers_1:
-	        	replayWrongAnswers();
-	        	return true;
-	        case R.id.replay_these_answers_2:
-	        	replayWrongAnswers();
-	        	return true;
-	        case R.id.replay_these_answers_3:
-	        	replayWrongAnswers();
-	        	return true;
-	        case R.id.replay_these_answers_4:
+	        case R.id.replay_these_answers:
 	        	replayWrongAnswers();
 	        	return true;
 	        case R.id.email_results:
@@ -90,8 +81,8 @@ public class ScoreReport extends  FragmentActivity {
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
+    
     private void returnToOpening(){
-    	
     	Intent intent = new Intent(getApplicationContext(), Opening.class);
     	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	startActivity(intent);
@@ -199,16 +190,16 @@ public class ScoreReport extends  FragmentActivity {
         break;
 	        case ALL : getMenuInflater().inflate(R.menu.menu_score_rep_layout, menu);
 	        break;
-	        case FIRST_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers_1, menu);
+	        case FIRST_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
 	        break;
 
-	        case SECOND_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers_2, menu);
+	        case SECOND_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
 	        break;
 
-	        case THIRD_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers_3, menu);
+	        case THIRD_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
 	        break;
 
-	        case FOURTH_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers_4, menu);
+	        case FOURTH_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
         }      
         return true;
     }
@@ -400,11 +391,9 @@ public class ScoreReport extends  FragmentActivity {
   @Override
   protected void onRestoreInstanceState(Bundle icicle){
 	  super.onRestoreInstanceState(icicle);
-
 	  if(icicle != null){
 		  fragLive = icicle.getBoolean("fragLive");
 		  whichFrag = icicle.getInt("whichFrag");
-		 
 	  }
   }
 }

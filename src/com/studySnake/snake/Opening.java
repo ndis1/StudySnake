@@ -1,7 +1,6 @@
 
 package com.studySnake.snake;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,10 +26,35 @@ import com.parse.ParseUser;
 //
 
 public class Opening extends ListActivity {
+	//here store all the quizzes collected from parse -- this is used to populate the listview
     private ArrayList<Quiz> quizzes = new ArrayList<Quiz>();
-    private static String ICICLE_KEY = "snake-view";
     private Context context;
+    //key for caching quizzes 
     private String CACHE_KEY = "quiz-cache";
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    	context = this;
+        setContentView(R.layout.opening_layout);
+        //if the cache is empty, get the quizzes from the database, otherwise, extract them from the caches
+   	   try {
+			List<Quiz> cachedEntries = (List<Quiz>) InternalStorage.readObject(this, CACHE_KEY);
+			if(cachedEntries.size() == 0 ){
+		        getQuizzesFromParse();
+	
+			}else{
+				quizzes.addAll(cachedEntries);
+				ColoredArrayAdapter<Quiz> adapter = new ColoredArrayAdapter<Quiz>(context,
+				        android.R.layout.simple_list_item_1, quizzes);
+		        setListAdapter(adapter);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+    }
     
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -62,6 +86,7 @@ public class Opening extends ListActivity {
         startActivity(i);
         this.finish();
     }
+    //get all quizzes from parse(this updates the list if there are new quizzes)
     public void refreshQuizzesList(){
     	ArrayList<Quiz> quizzesEmpty = new ArrayList<Quiz>();
         //wipe the cache
@@ -80,34 +105,7 @@ public class Opening extends ListActivity {
         getMenuInflater().inflate(R.menu.menu_opening_layout, menu);
         return true;
     }
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    	context = this;
-        setContentView(R.layout.opening_layout);
-
-   	   try {
-		List<Quiz> cachedEntries = (List<Quiz>) InternalStorage.readObject(this, CACHE_KEY);
-		if(cachedEntries.size() == 0 ){
-	        getQuizzesFromParse();
-
-		}else{
-			quizzes.addAll(cachedEntries);
-			ColoredArrayAdapter<Quiz> adapter = new ColoredArrayAdapter<Quiz>(context,
-			        android.R.layout.simple_list_item_1, quizzes);
-	        setListAdapter(adapter);
-		}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-       
-        
-    }
+   
     private void cacheQuizzes(){
          try {
       	   // Save the list of entries to internal storage
@@ -144,6 +142,9 @@ public class Opening extends ListActivity {
 			public void done(final List<ParseObject> objects, ParseException e) {
 				int questionCt = 0;
 				HashMap<String,ArrayList<Question>> quizesFound = new HashMap<String,ArrayList<Question>>();
+				//for now the questions are all their own objects. this processing is needed to sort the questions into
+				//their quizzes. After the webapp is redesigned, this should be able to just get the quizzes from parse
+				//and assemble them in a more straightforward way
 				for(ParseObject po : objects){
 					String quizName = po.getString("title");
 					String answer = po.getString("answer").trim();
@@ -176,9 +177,9 @@ public class Opening extends ListActivity {
 				ColoredArrayAdapter<Quiz> adapter = new ColoredArrayAdapter<Quiz>(context,
 				        android.R.layout.simple_list_item_1, quizzes);
 		        setListAdapter(adapter);
+		        //after the quizzes are recieved, cache them
 		        cacheQuizzes();
 			}
         });
-      
     }
 }

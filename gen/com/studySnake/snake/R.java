@@ -51,9 +51,9 @@ containing a value of this type.
         public static final int choice_b=0x7f080016;
         public static final int choice_c=0x7f080017;
         public static final int choice_d=0x7f080018;
-        public static final int different_quiz=0x7f08002d;
+        public static final int different_quiz=0x7f08002a;
         public static final int edit_name=0x7f080001;
-        public static final int email_results=0x7f08002a;
+        public static final int email_results=0x7f080027;
         public static final int etEmail=0x7f080002;
         public static final int etPassword=0x7f080005;
         public static final int etPasswordConfirm=0x7f080006;
@@ -67,16 +67,13 @@ containing a value of this type.
         public static final int mm=0x7f08001a;
         public static final int orTV=0x7f08000c;
         public static final int password=0x7f080009;
-        public static final int pause_button=0x7f08002b;
+        public static final int pause_button=0x7f080028;
         public static final int play_again=0x7f080023;
         public static final int query_display=0x7f080014;
-        public static final int quit=0x7f08002c;
+        public static final int quit=0x7f080029;
         public static final int register_button=0x7f08000d;
-        public static final int replay_these_answers_1=0x7f080024;
-        public static final int replay_these_answers_2=0x7f080026;
-        public static final int replay_these_answers_3=0x7f080027;
-        public static final int replay_these_answers_4=0x7f080028;
-        public static final int replay_wrong_answers=0x7f080029;
+        public static final int replay_these_answers=0x7f080024;
+        public static final int replay_wrong_answers=0x7f080026;
         public static final int return_to_opening=0x7f080025;
         public static final int sign_in_button=0x7f08000b;
         public static final int snake=0x7f080019;
@@ -96,22 +93,16 @@ containing a value of this type.
         public static final int layout_default_status=0x7f030004;
         public static final int opening_layout=0x7f030005;
         public static final int results_fragment=0x7f030006;
-        public static final int results_fragment_blue=0x7f030007;
-        public static final int results_fragment_red=0x7f030008;
-        public static final int results_fragment_yellow=0x7f030009;
-        public static final int score_report_layout=0x7f03000a;
-        public static final int snake_layout=0x7f03000b;
-        public static final int view_status=0x7f03000c;
+        public static final int score_report_layout=0x7f030007;
+        public static final int snake_layout=0x7f030008;
+        public static final int view_status=0x7f030009;
     }
     public static final class menu {
         public static final int lmenu_login_layout=0x7f070000;
         public static final int menu_opening_layout=0x7f070001;
-        public static final int menu_replay_these_answers_1=0x7f070002;
-        public static final int menu_replay_these_answers_2=0x7f070003;
-        public static final int menu_replay_these_answers_3=0x7f070004;
-        public static final int menu_replay_these_answers_4=0x7f070005;
-        public static final int menu_score_rep_layout=0x7f070006;
-        public static final int menu_snake_layout=0x7f070007;
+        public static final int menu_replay_these_answers=0x7f070002;
+        public static final int menu_score_rep_layout=0x7f070003;
+        public static final int menu_snake_layout=0x7f070004;
     }
     public static final class string {
         public static final int action_register=0x7f050009;

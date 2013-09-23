@@ -33,8 +33,10 @@ public class ResultsFragment extends ListFragment {
 			 
 	public static final int UserMap_ID = 1;
 	private int whichList;
+	//maintain a global toast so that the text can be changed rapidly when the user clicks different 
+	//items in the listview
 	private Toast mToast ;
-//
+
 	@Override
 	 public void onCreate(Bundle savedInstanceState) {
 	  super.onCreate(savedInstanceState);
@@ -56,30 +58,32 @@ public class ResultsFragment extends ListFragment {
 	public void onStart(){
 		  super.onStart();
 		  final LinearLayout l1 = (LinearLayout)getView().findViewById(R.id.back);
+		  //let the fragment know we want the color of the background to be red
 		  getListView().setCacheColorHint(Color.RED);
-
 		  l1.setOnClickListener(new View.OnClickListener() {
+			  //when the user clicks on the transparent edge(outside the list), close the fragment
 			@Override
 			public void onClick(View v) {
-	        	  ((ScoreReport) getActivity()).closeResultsFragment();
+	        	 ((ScoreReport) getActivity()).closeResultsFragment();
 			}
 		  });
 	}
+	
 	 @Override
 	 public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	   Bundle savedInstanceState) {
-		 
-		 //launch the list of questions answered on the xth try in using th layout that corresponds
-		 //to the color for that degree of success(green = best blue 2nd best yellow worse ,red awful
 		 View viewForResultsFragment =  inflater.inflate(R.layout.results_fragment, container, false);
-		
 		 return viewForResultsFragment;
 	 }
+	 
 	 @Override
 	 public void onActivityCreated (Bundle savedInstanceState){
 		 super.onActivityCreated(savedInstanceState);
 		 Resources res = getResources();
 		 View listView = getListView();
+
+		 //launch the list of questions answered on the xth try in the
+		 // color for that degree of success(green = best blue 2nd best, yellow worse ,red awful
 		 View backgroundView =  getActivity().findViewById(R.id.back);
 			 if(whichList == 0){				 
 				 listView.setBackgroundColor(res.getColor(R.color.green));
@@ -99,6 +103,7 @@ public class ResultsFragment extends ListFragment {
 //when list items are clicked show the answer to the question
 	 @Override
 	 public void onListItemClick(ListView l, View v, int position, long id) {
+		 //to make sure the toast doesn't stay too long, change the text of a global toast
 		 mToast.setText(answers.get(position));
 		 mToast.show();
 	 }

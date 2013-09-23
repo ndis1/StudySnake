@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import android.content.Context;
-
+//this class is used to cache data to the local android filesystem. 
 public final class InternalStorage{
 	 
 	   private InternalStorage() {}
