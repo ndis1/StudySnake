@@ -58,152 +58,8 @@ public class ScoreReport extends  FragmentActivity {
     private static final int FOURTH_TRY = 4;
 	private int whichTry = WRONG;
 	private Quiz quiz;
-    @Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	        case R.id.play_again:
-	        	 replay();
-	        	 return true;
-	        case R.id.return_to_opening:
-	        	returnToOpening();
-	        	return true;
-	        case R.id.replay_wrong_answers:
-	        	replayWrongAnswers();
-	        	return true;
-	        case R.id.replay_these_answers:
-	        	replayWrongAnswers();
-	        	return true;
-	        case R.id.email_results:
-	        	sendEmail();
-	        	return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}
-    
-    private void returnToOpening(){
-    	Intent intent = new Intent(getApplicationContext(), Opening.class);
-    	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    	startActivity(intent);
-    	this.finish();
-    }
-    private void sendEmail(){
-    	formatReportString();
-	    final AlertDialog.Builder emailAlert = new AlertDialog.Builder(this);
-	    final EditText input = new EditText(this);
-	    emailAlert.setTitle("Email Results");
-	    emailAlert.setMessage("Email to send results to:");
-	    emailAlert.setView(input);
-	    emailAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-	        public void onClick(DialogInterface dialog, int whichButton) {
-	            String value = input.getText().toString().trim();
-	            Intent email = new Intent(Intent.ACTION_SEND);
-	        	email.putExtra(Intent.EXTRA_EMAIL, new String[]{value});		  
-	        	email.putExtra(Intent.EXTRA_SUBJECT, ParseUser.getCurrentUser().getUsername() + " Study Snake Results");
-	        	email.putExtra(Intent.EXTRA_TEXT, reportString);
-	        	email.setType("message/rfc822");
-	        	startActivity(Intent.createChooser(email, "Choose an Email client :"));
-	        	
-	        }
-	    });
-
-	    emailAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-	        public void onClick(DialogInterface dialog, int whichButton) {
-	            dialog.cancel();
-	        }
-	    });
-	    emailAlert.show();               
-    	
-    }
-    private void replay(){
-    	int ct = 0;
-	   Intent i = new Intent(context,Snake.class);
-       i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-       ArrayList<Question> allUniq = filterQuestions(ALL);
-       ArrayList<Question> nuQuestions = new ArrayList<Question>();
-    	   for(Question q : allUniq){
-    		   String query = q.getQuery();
-    		   String nuCorAns = q.getCorrectAnswer();
-    		   ArrayList<String> nuAnswers = new ArrayList<String>();
-    		   for(String s : q.getAnswers2()){
-    			   nuAnswers.add(s);
-    		   }
-    		   nuQuestions.add(new Question(query,nuAnswers,nuAnswers,nuCorAns,ct));
-    		   ct++;
-    	   }
-       
-       Quiz nuQuiz = new Quiz(nuQuestions, quiz.getName());
-       for(int ii = 0; ii < ct ; ii++){
-    	   nuQuiz.addTryRecord(0, ii);
-       }
-       i.putExtra("whichQuiz",(Parcelable) nuQuiz);
-       startActivity(i);
-       this.finish();
-    }
-    private void replayWrongAnswers(){
-    	int ct = 0;
- 	   Intent i = new Intent(context,Snake.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        ArrayList<Question> allUniq = filterQuestions(whichTry);
-        
-        if(allUniq.size()>0){
-        	ArrayList<Question> nuQuestions = new ArrayList<Question>();
-      	   for(Question q : allUniq){
-      		   String query = q.getQuery();
-      		   String nuCorAns = q.getCorrectAnswer();
-      		   ArrayList<String> nuAnswers = new ArrayList<String>();
-      		   for(String s : q.getAnswers2()){
-      			   nuAnswers.add(s);
-      		   }
-      		   nuQuestions.add(new Question(query,nuAnswers,nuAnswers,nuCorAns,ct));
-      		   ct++;
-      	   }
-         
-         Quiz nuQuiz = new Quiz(nuQuestions, quiz.getName());
-         for(int ii = 0; ii < ct ; ii++){
-      	   nuQuiz.addTryRecord(0, ii);
-         }
-         
-        	i.putExtra("whichQuiz",(Parcelable) nuQuiz);
-         	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-            startActivity(i);
-            
-            this.finish();
-        }else{
-        	Toast.makeText(
-        		    this, 
-        		    "No Wrong Answers, Press \"Play again\" to Replay", 
-        		    Toast.LENGTH_LONG).show();
-        }
-    }
-    @Override
-    public void onBackPressed(){
-    	//back should do nothing
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        switch(whichTry){
-        case WRONG : getMenuInflater().inflate(R.menu.menu_score_rep_layout, menu);
-        break;
-	        case ALL : getMenuInflater().inflate(R.menu.menu_score_rep_layout, menu);
-	        break;
-	        case FIRST_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
-	        break;
-
-	        case SECOND_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
-	        break;
-
-	        case THIRD_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
-	        break;
-
-	        case FOURTH_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
-        }      
-        return true;
-    }
-    @Override
+	
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
@@ -242,6 +98,91 @@ public class ScoreReport extends  FragmentActivity {
             mChartView.repaint();
           }
     }
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.play_again:
+	        	 replay();
+	        	 return true;
+	        case R.id.return_to_opening:
+	        	returnToOpening();
+	        	return true;
+	        case R.id.replay_wrong_answers:
+	        	replayWrongAnswers();
+	        	return true;
+	        case R.id.replay_these_answers:
+	        	replayWrongAnswers();
+	        	return true;
+	        case R.id.email_results:
+	        	sendEmail();
+	        	return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+ 
+    @Override
+    public void onBackPressed(){
+    	//back should do nothing
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        switch(whichTry){
+        case WRONG : getMenuInflater().inflate(R.menu.menu_score_rep_layout, menu);
+        break;
+	        case ALL : getMenuInflater().inflate(R.menu.menu_score_rep_layout, menu);
+	        break;
+	        case FIRST_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
+	        break;
+
+	        case SECOND_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
+	        break;
+
+	        case THIRD_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
+	        break;
+
+	        case FOURTH_TRY : getMenuInflater().inflate(R.menu.menu_replay_these_answers, menu);
+        }      
+        return true;
+    }
+    
+    
+    @Override
+    public void onPause(){
+  	  super.onPause();
+  	  //if there is a fragment, close it down, but remember that it should be open on resume
+  	  if(fragLive){
+  		  closeResultsFragment();
+  		  fragLive = true;
+  	  }
+    }
+    @Override
+    protected void onResumeFragments(){
+  	  super.onResumeFragments();
+  	  //if a fragment should be launched, launch it
+  	  if(fragLive){
+  		  launchFragment(whichFrag);
+  	  }
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle icicle) {
+  	  super.onSaveInstanceState(icicle);
+  	  //remember whether there is a fragment alive, and which one
+  	  icicle.putBoolean("fragLive", fragLive);
+  	  icicle.putInt("whichFrag", whichFrag);
+  	}
+    @Override
+    protected void onRestoreInstanceState(Bundle icicle){
+  	  super.onRestoreInstanceState(icicle);
+  	  //if there is a fragment alive, set the globals so they 
+  	  //can be launched at the right time
+  	  if(icicle != null){
+  		  fragLive = icicle.getBoolean("fragLive");
+  		  whichFrag = icicle.getInt("whichFrag");
+  	  }
+    }
     
     private void launchFragment(int whichClicked){
     	whichFrag = whichClicked;
@@ -266,56 +207,123 @@ public class ScoreReport extends  FragmentActivity {
   	  fragLive = false;
   	  this.invalidateOptionsMenu();
     }
-    private XYMultipleSeriesDataset getBarDataset() {
-        XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-        ArrayList<String> legendTitles = new ArrayList<String>();
-        legendTitles.add("First Try");
-        for (int i = 0; i < SERIES_NR; i++) {
-            CategorySeries series = new CategorySeries(legendTitles.get(i));
-            for (int k = 1; k<5; k++) {
-                series.add(filterQuestions(k).size());
-            }
-            dataset.addSeries(series.toXYSeries());
-        }
-        return dataset;
-    }
-    public XYMultipleSeriesRenderer getBarRenderer() {
-    	 int[] colors = new int[] { Color.parseColor("#0066FF")};        
-         XYMultipleSeriesRenderer renderer = buildBarRenderer(colors);
-		myChartSettings(renderer);
-		return renderer;
-	}//
-
-	private void myChartSettings(XYMultipleSeriesRenderer renderer) {
-		renderer.setChartTitle("How well you answered the questions");
-		renderer.setXAxisMin(0.5);
-		renderer.setXAxisMax(5.5);
-		renderer.setYAxisMin(0);
-		renderer.setYAxisMax(questions.size());
-		renderer.addXTextLabel(1, "1");
-		renderer.addXTextLabel(2, "2");
-		renderer.addXTextLabel(3, "3");
-		renderer.addXTextLabel(4, "4");
-		renderer.setYLabelsAlign(Align.RIGHT);
-		renderer.setBarSpacing(0.5);
-		renderer.setXTitle("Number of tries");
-		renderer.setYTitle("How Many Questions");
-		renderer.setShowGrid(true);
-	    renderer.setGridColor(Color.GRAY);
-	    renderer.setZoomEnabled(false, false);
-	    renderer.setPanEnabled(false, false);
-	    renderer.setXLabels(0); // sets the number of integer labels to appear
-	}
+    
+   
 	
-	public void formatReportString(){
-		
-		String greeting = "This is your StudySnake report : \n " ;
-		String firstRight = "Questions right on the first try: \n"+ reportFilter(filterQuestions(1)) + "\n";
-		String secondRight = "Questions right on the second try: \n"+ reportFilter(filterQuestions(2))+ "\n";;
-		String thirdRight ="Questions right on the third try: \n"+  reportFilter(filterQuestions(3))+ "\n";;
-		String fourthRight = "Questions right on the fourth try: \n"+ reportFilter(filterQuestions(4));
-		reportString = greeting + firstRight + secondRight + thirdRight + fourthRight;
-	}
+    private void returnToOpening(){
+    	Intent intent = new Intent(getApplicationContext(), Opening.class);
+    	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    	startActivity(intent);
+    	this.finish();
+    }
+    
+    //send an email to a provided email address with a report of the user's performance 
+    private void sendEmail(){
+    	formatReportString();
+	    final AlertDialog.Builder emailAlert = new AlertDialog.Builder(this);
+	    final EditText input = new EditText(this);
+	    emailAlert.setTitle("Email Results");
+	    emailAlert.setMessage("Email to send results to:");
+	    emailAlert.setView(input);
+	    emailAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int whichButton) {
+	            String value = input.getText().toString().trim();
+	            Intent email = new Intent(Intent.ACTION_SEND);
+	        	email.putExtra(Intent.EXTRA_EMAIL, new String[]{value});		
+	        	//use the parse user object to insert the name of the user into the email
+	        	email.putExtra(Intent.EXTRA_SUBJECT, ParseUser.getCurrentUser().getUsername() + " Study Snake Results");
+	        	email.putExtra(Intent.EXTRA_TEXT, reportString);
+	        	email.setType("message/rfc822");
+	        	startActivity(Intent.createChooser(email, "Choose an Email client :"));
+	        	
+	        }
+	    });
+
+	    emailAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int whichButton) {
+	            dialog.cancel();
+	        }
+	    });
+	    emailAlert.show();               
+    	
+    }
+    
+  //formatting for the email report
+  	public void formatReportString(){
+  		
+  		String greeting = "This is your StudySnake report : \n " ;
+  		String firstRight = "Questions right on the first try: \n"+ reportFilter(filterQuestions(1)) + "\n";
+  		String secondRight = "Questions right on the second try: \n"+ reportFilter(filterQuestions(2))+ "\n";;
+  		String thirdRight ="Questions right on the third try: \n"+  reportFilter(filterQuestions(3))+ "\n";;
+  		String fourthRight = "Questions right on the fourth try: \n"+ reportFilter(filterQuestions(4));
+  		reportString = greeting + firstRight + secondRight + thirdRight + fourthRight;
+  	}
+  	
+  	//replay all answers
+    private void replay(){
+    	int ct = 0;
+	   Intent i = new Intent(context,Snake.class);
+       i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+       ArrayList<Question> allUniq = filterQuestions(ALL);
+       //create a new quiz, using all the questions from the old one, but setting the 
+       //answers to be the full answer set, not only the ones that were left at the end of the last quiz
+       ArrayList<Question> nuQuestions = new ArrayList<Question>();
+    	   for(Question q : allUniq){
+    		   String query = q.getQuery();
+    		   String nuCorAns = q.getCorrectAnswer();
+    		   ArrayList<String> nuAnswers = new ArrayList<String>();
+    		   for(String s : q.getAnswers2()){
+    			   nuAnswers.add(s);
+    		   }
+    		   nuQuestions.add(new Question(query,nuAnswers,nuAnswers,nuCorAns,ct));
+    		   ct++;
+    	   }
+       
+       Quiz nuQuiz = new Quiz(nuQuestions, quiz.getName());
+       for(int ii = 0; ii < ct ; ii++){
+    	   nuQuiz.addTryRecord(0, ii);
+       }
+       i.putExtra("whichQuiz",(Parcelable) nuQuiz);
+       startActivity(i);
+       this.finish();
+    }
+    
+    //replay only the wrong answers
+    private void replayWrongAnswers(){
+    	int ct = 0;
+ 	   Intent i = new Intent(context,Snake.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        ArrayList<Question> allUniq = filterQuestions(whichTry);
+        //if there are wrong answers, put them in a new quiz and run it
+        //if not, display a notification via toast 
+        if(allUniq.size()>0){
+        	ArrayList<Question> nuQuestions = new ArrayList<Question>();
+      	   	for(Question q : allUniq){
+      		   String query = q.getQuery();
+      		   String nuCorAns = q.getCorrectAnswer();
+      		   ArrayList<String> nuAnswers = new ArrayList<String>();
+      		   for(String s : q.getAnswers2()){
+      			   nuAnswers.add(s);
+      		   }
+      		   nuQuestions.add(new Question(query,nuAnswers,nuAnswers,nuCorAns,ct));
+      		   ct++;
+      	   	}
+	        Quiz nuQuiz = new Quiz(nuQuestions, quiz.getName());
+	        for(int ii = 0; ii < ct ; ii++){
+	        	nuQuiz.addTryRecord(0, ii);
+	        }
+        	i.putExtra("whichQuiz",(Parcelable) nuQuiz);
+         	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+            this.finish();
+        }else{
+        	Toast.makeText(
+        		    this, 
+        		    "No Wrong Answers, Press \"Play again\" to Replay", 
+        		    Toast.LENGTH_LONG).show();
+        }
+    }
+	//formatting for the email
 	public String reportFilter(ArrayList<Question> in){
 		String string_to_return = "";
 		for(Question q : in){
@@ -323,6 +331,7 @@ public class ScoreReport extends  FragmentActivity {
 		}
 		return string_to_return;
 	}
+	//given all the questions, return only some of them, depending on what we want to do with them
 	public ArrayList<Question> filterQuestions(int which){
 		ArrayList<Question> questionsToReturn = new ArrayList<Question>();
 		if(which == ALL){
@@ -352,6 +361,24 @@ public class ScoreReport extends  FragmentActivity {
 		}
 		return questionsToReturn;
 	}
+	
+	//achartengine set the height for the bars based on the number of questions 
+	//in each category/try
+	 private XYMultipleSeriesDataset getBarDataset() {
+	        XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+	        ArrayList<String> legendTitles = new ArrayList<String>();
+	        legendTitles.add("First Try");
+	        for (int i = 0; i < SERIES_NR; i++) {
+	            CategorySeries series = new CategorySeries(legendTitles.get(i));
+	            for (int k = 1; k<5; k++) {
+	                series.add(filterQuestions(k).size());
+	            }
+	            dataset.addSeries(series.toXYSeries());
+	        }
+	        return dataset;
+	    }
+	
+	//achartengine series renderer, doesn't make bars different colors yet
   protected XYMultipleSeriesRenderer buildBarRenderer(int[] colors) {
 	    XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
 	    renderer.setAxisTitleTextSize(16);
@@ -366,34 +393,33 @@ public class ScoreReport extends  FragmentActivity {
 	    }
 	    return renderer;
 	  }
-  @Override
-  public void onPause(){
-	  super.onPause();
-	  if(fragLive){
-		  closeResultsFragment();
-		  fragLive = true;
-	  }
-  }
-  @Override
-  protected void onResumeFragments(){
-	  super.onResumeFragments();
-	  if(fragLive){
-		  launchFragment(whichFrag);
-	  }
-  }
-  @Override
-  protected void onSaveInstanceState(Bundle icicle) {
-	  super.onSaveInstanceState(icicle);
-	  
-	  icicle.putBoolean("fragLive", fragLive);
-	  icicle.putInt("whichFrag", whichFrag);
+  //achart engine multiple series renderer
+  public XYMultipleSeriesRenderer getBarRenderer() {
+ 	 int[] colors = new int[] { Color.parseColor("#0066FF")};        
+      XYMultipleSeriesRenderer renderer = buildBarRenderer(colors);
+		myChartSettings(renderer);
+		return renderer;
+	}//
+  //achartengine settings
+	private void myChartSettings(XYMultipleSeriesRenderer renderer) {
+		renderer.setChartTitle("How well you answered the questions");
+		renderer.setXAxisMin(0.5);
+		renderer.setXAxisMax(5.5);
+		renderer.setYAxisMin(0);
+		renderer.setYAxisMax(questions.size());
+		renderer.addXTextLabel(1, "1");
+		renderer.addXTextLabel(2, "2");
+		renderer.addXTextLabel(3, "3");
+		renderer.addXTextLabel(4, "4");
+		renderer.setYLabelsAlign(Align.RIGHT);
+		renderer.setBarSpacing(0.5);
+		renderer.setXTitle("Number of tries");
+		renderer.setYTitle("How Many Questions");
+		renderer.setShowGrid(true);
+	    renderer.setGridColor(Color.GRAY);
+	    renderer.setZoomEnabled(false, false);
+	    renderer.setPanEnabled(false, false);
+	    renderer.setXLabels(0); // sets the number of integer labels to appear
 	}
-  @Override
-  protected void onRestoreInstanceState(Bundle icicle){
-	  super.onRestoreInstanceState(icicle);
-	  if(icicle != null){
-		  fragLive = icicle.getBoolean("fragLive");
-		  whichFrag = icicle.getInt("whichFrag");
-	  }
-  }
+  
 }

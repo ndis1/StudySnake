@@ -41,9 +41,9 @@ containing a value of this type.
         public static final int yellowstar=0x7f020007;
     }
     public static final class id {
-        public static final int bac_dim_lasn=0x7f08001d;
-        public static final int bac_dim_lasn_green=0x7f08001e;
+        public static final int bac_dim_green=0x7f08001d;
         public static final int bac_dim_layout=0x7f080012;
+        public static final int bac_dim_red=0x7f08001c;
         public static final int back=0x7f08000f;
         public static final int btnCreateAccount=0x7f080007;
         public static final int chart=0x7f080011;
@@ -51,9 +51,9 @@ containing a value of this type.
         public static final int choice_b=0x7f080016;
         public static final int choice_c=0x7f080017;
         public static final int choice_d=0x7f080018;
-        public static final int different_quiz=0x7f08002a;
+        public static final int different_quiz=0x7f080029;
         public static final int edit_name=0x7f080001;
-        public static final int email_results=0x7f080027;
+        public static final int email_results=0x7f080026;
         public static final int etEmail=0x7f080002;
         public static final int etPassword=0x7f080005;
         public static final int etPasswordConfirm=0x7f080006;
@@ -61,27 +61,26 @@ containing a value of this type.
         public static final int fragment_container=0x7f080013;
         public static final int login=0x7f08000a;
         public static final int main_view=0x7f080000;
-        public static final int menu_forgot_password=0x7f080020;
-        public static final int menu_logout=0x7f080021;
-        public static final int menu_refresh_quiz_list=0x7f080022;
-        public static final int mm=0x7f08001a;
+        public static final int menu_forgot_password=0x7f08001f;
+        public static final int menu_logout=0x7f080020;
+        public static final int menu_refresh_quiz_list=0x7f080021;
         public static final int orTV=0x7f08000c;
         public static final int password=0x7f080009;
-        public static final int pause_button=0x7f080028;
-        public static final int play_again=0x7f080023;
+        public static final int pause_button=0x7f080027;
+        public static final int play_again=0x7f080022;
         public static final int query_display=0x7f080014;
-        public static final int quit=0x7f080029;
+        public static final int quit=0x7f080028;
         public static final int register_button=0x7f08000d;
-        public static final int replay_these_answers=0x7f080024;
-        public static final int replay_wrong_answers=0x7f080026;
-        public static final int return_to_opening=0x7f080025;
+        public static final int replay_these_answers=0x7f080023;
+        public static final int replay_wrong_answers=0x7f080025;
+        public static final int return_to_opening=0x7f080024;
         public static final int sign_in_button=0x7f08000b;
         public static final int snake=0x7f080019;
         public static final int statusView=0x7f08000e;
-        public static final int status_message=0x7f08001f;
+        public static final int status_message=0x7f08001e;
         public static final int submitButton=0x7f080003;
-        public static final int text=0x7f08001c;
-        public static final int textA=0x7f08001b;
+        public static final int text=0x7f08001b;
+        public static final int textA=0x7f08001a;
         public static final int username=0x7f080008;
         public static final int view_graph=0x7f080010;
     }

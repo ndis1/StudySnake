@@ -10,9 +10,7 @@
          android:paddingTop="68dp"
          android:background="#501ac152"
          android:id="@+id/back"  
-         
          >
-	
      <ListView android:id="@id/android:list"
                android:layout_width="match_parent"
                android:layout_height="0dp"

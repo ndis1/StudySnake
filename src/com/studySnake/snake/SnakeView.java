@@ -176,50 +176,6 @@ public class SnakeView extends TileView implements OnTouchListener{
     	initSnakeView();
     }
 	
-	public boolean onRightToLeftSwipe(){   
-	    if (mDirection != EAST) {
-	        mNextDirection = WEST;
-	    }
-	    return true;
-	}
-	public boolean onLeftToRightSwipe(){   
-	    if (mDirection != WEST) {
-	        mNextDirection = EAST;
-	    }
-	    return true;
-	}
-	public boolean onTopToBottomSwipe(){ 
-	
-	    if (mDirection != NORTH) {
-	        mNextDirection = SOUTH;
-	    }
-	    return true;
-	}
-	public boolean onBottomToTopSwipe(){
-	    if (mMode == READY | mMode == LOSE) {
-	        // At the beginning of the game, or the end of a previous one,
-	        // we should start a new game.
-	        initNewGame();
-	        setMode(RUNNING);
-	        update();
-	        resetApples=true;
-	        return true;
-	    }
-	
-	    if (mMode == PAUSE) {
-	        // If the game is merely paused, we should just continue where
-	        // we left off.
-	        setMode(RUNNING);
-	        update();
-	        return true;
-	    }
-	
-	    if (mDirection != SOUTH) {
-	        mNextDirection = NORTH;
-	    }
-	    return true;
-	
-	}
     private void initSnakeView() {
 
         setFocusable(true);
@@ -248,7 +204,6 @@ public class SnakeView extends TileView implements OnTouchListener{
         // For now we're just going to load up a short default eastbound snake
         // that's just turned north
 
-        
         mSnakeTrail.add(new Coordinate(7, 7));
         mSnakeTrail.add(new Coordinate(6, 7));
         mSnakeTrail.add(new Coordinate(5, 7));
@@ -262,7 +217,6 @@ public class SnakeView extends TileView implements OnTouchListener{
         mScore = 0;
     
     }
-
 
     /**
      * Given a ArrayList of coordinates, we need to flatten them into an array of
@@ -302,17 +256,13 @@ public class SnakeView extends TileView implements OnTouchListener{
      */
     public Bundle saveState() {
         Bundle map = new Bundle();
-
         map.putIntArray("mAppleList", ltrCoordArrayListToArray(mAppleList));
         map.putInt("mDirection", Integer.valueOf(mDirection));
         map.putInt("mNextDirection", Integer.valueOf(mNextDirection));
         map.putLong("mMoveDelay", Long.valueOf(mMoveDelay));
         map.putLong("mScore", Long.valueOf(mScore));
         map.putIntArray("mSnakeTrail", coordArrayListToArray(mSnakeTrail));
-
         return map;
-        
-        
     }
 
     /**
@@ -397,7 +347,7 @@ public class SnakeView extends TileView implements OnTouchListener{
 
     }
     
-    /* sets the list of questions
+    /** sets the list of questions
      * 
      * 
      */
@@ -409,7 +359,7 @@ public class SnakeView extends TileView implements OnTouchListener{
     	whichRound =0;
     }
     
-    
+    //return the quiz that the snakeview is using
     public Quiz getQuiz(){
     	return quizz;
     }
@@ -507,11 +457,8 @@ public class SnakeView extends TileView implements OnTouchListener{
      * Handles the basic update loop, checking to see if we are in the running
      * state, determining if a move should be made, updating the snake's location.
      */
-    public int getMode(){
-    	return mMode;
-    }
+   
     public void update() {
-        Log.wtf("UPDATE CALLED", "WWWHAT");
 
         if (mMode == RUNNING) {
             long now = System.currentTimeMillis();
@@ -519,7 +466,6 @@ public class SnakeView extends TileView implements OnTouchListener{
             if(whichRound >= questions.size()){
             	whichRound = 0;
             }
-            Log.wtf("SNAKEVIEW WHICHR",whichRound+"");
             Question thisQue = questions.get(whichRound);
 
             if (now - mLastMove > mMoveDelay) {
@@ -535,7 +481,6 @@ public class SnakeView extends TileView implements OnTouchListener{
              }
               updateSnake();
               mLastMove = now;//
-
                 ArrayList<String> thisAns = thisQue.getAnswers();
                 que = thisQue.getQuery();
                 String A, B, C, D;
@@ -560,14 +505,11 @@ public class SnakeView extends TileView implements OnTouchListener{
                 	 }
                  }
             	 String qdisp = que;
-                 
                   questionDisp.setText(""+qdisp);
                   AanswerDisp.setText(A);
                   BanswerDisp.setText(B);
                   CanswerDisp.setText(C);
                   DanswerDisp.setText(D);
-
-                
             }
             if(resetApples){
                 alreadyAdded.clear();
@@ -714,7 +656,7 @@ public class SnakeView extends TileView implements OnTouchListener{
             }
         }
         if(resetToStartSn){
-       	 resetToStartSnake();
+        	resetToStartSnake();
 	    }else{
 	        // push a new head onto the ArrayList and pull off the tail
 	        mSnakeTrail.add(0, newHead);
@@ -733,64 +675,7 @@ public class SnakeView extends TileView implements OnTouchListener{
 	        }
         }
     }
-/////This class is a basic coordinate 
-     class Coordinate {
-        public int x;
-        public int y;
-        public String Ltr;
-        
-       
-        
-        public Coordinate(int newX, int newY) {
-            x = newX;
-            y = newY;
-        }
-
-        public boolean equals(Coordinate other) {
-            if (x == other.x && y == other.y) {
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return "Coordinate: [" + x + "," + y + "]";
-        }
-    }
-     ///slightly expand the basic coodrdinate to also hold a letter
-    private class LtrCoordinate extends Coordinate {
-        public int Ltr;
-        
-        public LtrCoordinate(int newX, int newY, int s) {
-        	super(newX, newY);
-            Ltr = s;
-        }
-      
-        @Override
-        public boolean equals(Coordinate other) {
-        	try{
-            if (x == other.x && y == other.y && Ltr == Integer.valueOf(other.Ltr)) {
-                return true;
-            }
-        	}catch(Exception e){
-        		try{
-        			if (x == other.x && y == other.y) {
-                        return true;
-                    }
-        		}catch(Exception p){
-        			return false;
-        		}
-        	}
-            return false;
-        }
-        @Override
-        public String toString() {
-            return "Coordinate: [" + x + "," + y + "] : letter = " + Ltr;
-        }
-    }
-
-
+//set the snake back to the beginnign snake at the beginnign speed
     public void resetToStartSnake(){
     	//clear the old snake
     	mSnakeTrail.clear();
@@ -808,21 +693,71 @@ public class SnakeView extends TileView implements OnTouchListener{
         	mNextDirection=SOUTH;
         }
     }
-    
+    //methods to toggle the flash of green or red signaling whether the question was correctly answer
+    //they call the other views in the layout and turn them on or off
     public void redCoverOn(){
-    	((Snake)getContext()).findViewById(R.id.bac_dim_lasn).setVisibility(RelativeLayout.VISIBLE);
+    	((Snake)getContext()).findViewById(R.id.bac_dim_red).setVisibility(RelativeLayout.VISIBLE);
     }
     public void redCoverOff(){
-      	 ((Snake)getContext()).findViewById(R.id.bac_dim_lasn).setVisibility(RelativeLayout.GONE);
+      	 ((Snake)getContext()).findViewById(R.id.bac_dim_red).setVisibility(RelativeLayout.GONE);
     }
     
     public void greenCoverOn(){
-      	 ((Snake)getContext()).findViewById(R.id.bac_dim_lasn_green).setVisibility(RelativeLayout.VISIBLE);
+      	 ((Snake)getContext()).findViewById(R.id.bac_dim_green).setVisibility(RelativeLayout.VISIBLE);
     }
     
     public void greenCoverOff(){
-        ((Snake)getContext()).findViewById(R.id.bac_dim_lasn_green).setVisibility(RelativeLayout.GONE);
+        ((Snake)getContext()).findViewById(R.id.bac_dim_green).setVisibility(RelativeLayout.GONE);
     }
+    
+    /**
+     * methods for dealing with swipes
+     * 
+     */
+	public boolean onRightToLeftSwipe(){   
+	    if (mDirection != EAST) {
+	        mNextDirection = WEST;
+	    }
+	    return true;
+	}
+	public boolean onLeftToRightSwipe(){   
+	    if (mDirection != WEST) {
+	        mNextDirection = EAST;
+	    }
+	    return true;
+	}
+	public boolean onTopToBottomSwipe(){ 
+	
+	    if (mDirection != NORTH) {
+	        mNextDirection = SOUTH;
+	    }
+	    return true;
+	}
+	public boolean onBottomToTopSwipe(){
+	    if (mMode == READY | mMode == LOSE) {
+	        // At the beginning of the game, or the end of a previous one,
+	        // we should start a new game.
+	        initNewGame();
+	        setMode(RUNNING);
+	        update();
+	        resetApples=true;
+	        return true;
+	    }
+	
+	    if (mMode == PAUSE) {
+	        // If the game is merely paused, we should just continue where
+	        // we left off.
+	        setMode(RUNNING);
+	        update();
+	        return true;
+	    }
+	
+	    if (mDirection != SOUTH) {
+	        mNextDirection = NORTH;
+	    }
+	    return true;
+	
+	}
     
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
@@ -860,4 +795,58 @@ public class SnakeView extends TileView implements OnTouchListener{
 	    }
 	    return false;
 	}
+/////This class is a basic coordinate 
+    class Coordinate {
+       public int x;
+       public int y;
+       public String Ltr;
+       
+       public Coordinate(int newX, int newY) {
+           x = newX;
+           y = newY;
+       }
+
+       public boolean equals(Coordinate other) {
+           if (x == other.x && y == other.y) {
+               return true;
+           }
+           return false;
+       }
+
+       @Override
+       public String toString() {
+           return "Coordinate: [" + x + "," + y + "]";
+       }
+   }
+    ///slightly expand the basic coodrdinate to also hold a letter
+   private class LtrCoordinate extends Coordinate {
+       public int Ltr;
+       
+       public LtrCoordinate(int newX, int newY, int s) {
+       	super(newX, newY);
+           Ltr = s;
+       }
+     
+       @Override
+       public boolean equals(Coordinate other) {
+       	try{
+           if (x == other.x && y == other.y && Ltr == Integer.valueOf(other.Ltr)) {
+               return true;
+           }
+       	}catch(Exception e){
+       		try{
+       			if (x == other.x && y == other.y) {
+                       return true;
+                   }
+       		}catch(Exception p){
+       			return false;
+       		}
+       	}
+           return false;
+       }
+       @Override
+       public String toString() {
+           return "Coordinate: [" + x + "," + y + "] : letter = " + Ltr;
+       }
+   }
 }

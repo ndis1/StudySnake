@@ -8,7 +8,8 @@ import android.os.Parcelable;
 
 
 public class Question implements Parcelable, Serializable {
-	/**
+	/**this class is a question that has the query, answers, correct answer, and id. It also has reset answers
+	 * for making a new question once the regular answers have been mutilated. a question belongs to a quiz
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
@@ -18,7 +19,6 @@ public class Question implements Parcelable, Serializable {
 
 	private String myCorrectAnswer;
 	private int myId;
-	private int tryGottenOn;
 	private boolean done;
 	public Question(String query, ArrayList<String> answers, ArrayList<String> answers2, String correctAnswer, int id){
 		myAnswers = new  ArrayList<String>();
@@ -28,7 +28,6 @@ public class Question implements Parcelable, Serializable {
 		resetAnswers.addAll(answers2);
 		myCorrectAnswer=correctAnswer;
 		myId=id;
-		tryGottenOn = 0;
 		done = false;
 	}
 	
@@ -61,12 +60,7 @@ public class Question implements Parcelable, Serializable {
 	public int hashCode(){
 		return myId;
 	}
-	public void setTryGottenOn(int i){
-		tryGottenOn = i;
-	}
-	//public int getTryGottenOn(){
-	//	return tryGottenOn;
-	//}
+	
 	public void setDone(boolean b){
 	done = b;
 	}
@@ -102,7 +96,6 @@ public class Question implements Parcelable, Serializable {
 		dest.writeStringList(resetAnswers);
 
 		dest.writeInt(myId);
-		dest.writeInt(tryGottenOn);
 		dest.writeByte((byte) (done ? 1 : 0)); 
 	}
 	public static final Parcelable.Creator<Question> CREATOR
@@ -125,7 +118,6 @@ public class Question implements Parcelable, Serializable {
 		 in.readStringList(myAnswers);
 		 in.readStringList(resetAnswers);
 		 myId = in.readInt();
-		 tryGottenOn = in.readInt();
 		 done = in.readByte() == 1;
      }
 }

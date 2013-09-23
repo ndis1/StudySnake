@@ -8,7 +8,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Quiz implements Serializable,Parcelable {
-	
+	/**this class has questions, and the try on which they were gotten right. all questions start on the 
+	 * zeroth try, because they have not been gotten right. 
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Question> questions;
 	private String name;
