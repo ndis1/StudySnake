@@ -67,7 +67,7 @@
 	<RelativeLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:layout_below="@+id/choice_d" >
+	    android:layout_below="@+id/query_display" >
 		<TextView
 		 android:id="@+id/textA"
 			android:text="@string/snake_layout_text_text"

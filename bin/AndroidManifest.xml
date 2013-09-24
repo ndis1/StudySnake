@@ -5,7 +5,7 @@
     
     package="com.studySnake.snake">
     <uses-sdk
-        android:minSdkVersion="14" 
+        android:minSdkVersion="16" 
    		android:targetSdkVersion="18" />
    <supports-screens 
         android:xlargeScreens="false"
@@ -19,7 +19,7 @@
     <application 
         android:label="Study Snake"
         android:allowBackup="true"
-        android:icon="@drawable/badsnakepic"
+        android:icon="@drawable/snake_icon_pic"
         android:name="com.studySnake.snake.BaseApplication"
         >
           <activity
@@ -35,6 +35,8 @@
         
          <activity
             android:name="com.studySnake.snake.Login"
+                   		android:screenOrientation="portrait"
+            
             android:windowSoftInputMode="adjustResize|stateVisible" 
             android:uiOptions="splitActionBarWhenNarrow" 
             android:noHistory="true">

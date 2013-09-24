@@ -40,9 +40,10 @@ public class Opening extends ListActivity {
         //if the cache is empty, get the quizzes from the database, otherwise, extract them from the caches
    	   try {
 			List<Quiz> cachedEntries = (List<Quiz>) InternalStorage.readObject(this, CACHE_KEY);
-			if(cachedEntries.size() == 0 ){
+			if(cachedEntries == null){
 		        getQuizzesFromParse();
-	
+			}else if(cachedEntries.size() == 0 ){
+		        getQuizzesFromParse();
 			}else{
 				quizzes.addAll(cachedEntries);
 				ColoredArrayAdapter<Quiz> adapter = new ColoredArrayAdapter<Quiz>(context,

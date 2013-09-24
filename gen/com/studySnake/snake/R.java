@@ -32,12 +32,12 @@ containing a value of this type.
     }
     public static final class drawable {
         public static final int aim=0x7f020000;
-        public static final int badsnakepic=0x7f020001;
-        public static final int bim=0x7f020002;
-        public static final int cim=0x7f020003;
-        public static final int dim=0x7f020004;
-        public static final int greenstar=0x7f020005;
-        public static final int redstar=0x7f020006;
+        public static final int bim=0x7f020001;
+        public static final int cim=0x7f020002;
+        public static final int dim=0x7f020003;
+        public static final int greenstar=0x7f020004;
+        public static final int redstar=0x7f020005;
+        public static final int snake_icon_pic=0x7f020006;
         public static final int yellowstar=0x7f020007;
     }
     public static final class id {

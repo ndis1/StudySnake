@@ -2,6 +2,8 @@ package com.studySnake.snake;
 
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 
 import com.studySnake.snake.R;
 import com.studySnake.snake.model.AuthenticateUserErrorEvent;
@@ -27,7 +29,8 @@ import com.squareup.otto.Subscribe;
  *
  */
 public class CreateAccountFragment extends BaseFragment implements OnClickListener {
-
+	@Inject 
+	UserManager userM;
     protected static final String EXTRA_EMAIL = "com.keyconsultant.parse.logintutorial.fragment.extra.EMAIL";
     protected static final String EXTRA_USERNAME = "com.keyconsultant.parse.logintutorial.fragment.extra.USERNAME";
     protected static final String EXTRA_PASSWORD = "com.keyconsultant.parse.logintutorial.fragment.extra.PASSWORD";
@@ -157,7 +160,7 @@ public class CreateAccountFragment extends BaseFragment implements OnClickListen
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            UserManager.getInstance().signUp(mUsername.toLowerCase(Locale.getDefault()), mEmail, mPassword);
+            userM.signUp(mUsername.toLowerCase(Locale.getDefault()), mEmail, mPassword);
             
         }
         

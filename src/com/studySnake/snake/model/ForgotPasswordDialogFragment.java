@@ -1,6 +1,8 @@
 package com.studySnake.snake.model;
 
 
+import javax.inject.Inject;
+
 import com.studySnake.snake.R;
 
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.widget.EditText;
  *
  */
 public class ForgotPasswordDialogFragment extends DialogFragment implements OnClickListener{ 
+	@Inject
+	UserManager userM;
 	private EditText mEmailEditText;
 	
 	public ForgotPasswordDialogFragment (){
@@ -51,7 +55,7 @@ public class ForgotPasswordDialogFragment extends DialogFragment implements OnCl
 	private void submitForgotPassword(){
 		
 		
-		UserManager.getInstance().forgotPassword(mEmailEditText.getText().toString());
+		userM.forgotPassword(mEmailEditText.getText().toString());
 		this.dismiss();
 	}
 }

@@ -1,10 +1,13 @@
 package com.studySnake.snake.model;
 
+import javax.inject.Inject;
+
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.RequestPasswordResetCallback;
 import com.parse.SignUpCallback;
+import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 
 /**
@@ -13,17 +16,24 @@ import com.squareup.otto.Produce;
  * @author Trey Robinson
  * 
  */
-public class UserManager extends BaseManager {
-
-	private static UserManager mManager;
-
-	public static UserManager getInstance() {
+public class UserManager  {
+	@Inject Bus bus;
+	
+	protected void postEvent(Object event){
+		bus.post(event);
+		
+	}
+	@Inject
+	public UserManager(Bus bus){
+		this.bus = bus;
+	}
+	/*public static UserManager getInstance() {
 		if (mManager == null) {
 			mManager = new UserManager();
 		}
 
 		return mManager;
-	}
+	}*/
 
 	/**
 	 * @return Current user

@@ -12,7 +12,7 @@ import javax.inject.Provider;
  * instance provision of types served by {@code @Provides} methods.
  */
 public final class BaseApplication$MyModule$$ModuleAdapter extends ModuleAdapter<com.studySnake.snake.BaseApplication.MyModule> {
-  private static final String[] INJECTS = { "members/com.studySnake.snake.BaseActivity", "members/com.studySnake.snake.BaseFragment", "members/com.studySnake.snake.LoginFragment", "members/com.studySnake.snake.Login", "members/com.studySnake.snake.model.BaseManager", "members/com.studySnake.snake.model.UserManager", };
+  private static final String[] INJECTS = { "members/com.studySnake.snake.BaseActivity", "members/com.studySnake.snake.BaseFragment", "members/com.studySnake.snake.LoginFragment", "members/com.studySnake.snake.Login", "members/com.studySnake.snake.model.BaseManager", "members/com.studySnake.snake.model.UserManager", "members/com.studySnake.snake.CreateAccountFragment", "members/com.studySnake.snake.model.ForgotPasswordDialogFragment", };
   private static final Class<?>[] STATIC_INJECTIONS = { };
   private static final Class<?>[] INCLUDES = { };
 
@@ -26,7 +26,35 @@ public final class BaseApplication$MyModule$$ModuleAdapter extends ModuleAdapter
    */
   @Override
   public void getBindings(Map<String, Binding<?>> map) {
+    map.put("com.studySnake.snake.model.UserManager", new ProvidesUserManagerProvidesAdapter(module));
     map.put("com.squareup.otto.Bus", new ProvideBusProvidesAdapter(module));
+  }
+
+  /**
+   * A {@code Binder<com.studySnake.snake.model.UserManager>} implementation which satisfies
+   * Dagger's infrastructure requirements including:
+   * 
+   * Being a {@code Provider<com.studySnake.snake.model.UserManager>} and handling creation and
+   * preparation of object instances.
+   */
+  public static final class ProvidesUserManagerProvidesAdapter extends Binding<com.studySnake.snake.model.UserManager>
+      implements Provider<com.studySnake.snake.model.UserManager> {
+    private final com.studySnake.snake.BaseApplication.MyModule module;
+
+    public ProvidesUserManagerProvidesAdapter(com.studySnake.snake.BaseApplication.MyModule module) {
+      super("com.studySnake.snake.model.UserManager", null, IS_SINGLETON, "com.studySnake.snake.BaseApplication.MyModule.providesUserManager()");
+      this.module = module;
+      setLibrary(false);
+    }
+
+    /**
+     * Returns the fully provisioned instance satisfying the contract for
+     * {@code Provider<com.studySnake.snake.model.UserManager>}.
+     */
+    @Override
+    public com.studySnake.snake.model.UserManager get() {
+      return module.providesUserManager();
+    }
   }
 
   /**

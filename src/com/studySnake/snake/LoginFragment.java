@@ -2,6 +2,8 @@ package com.studySnake.snake;
 
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -27,6 +29,8 @@ import com.studySnake.snake.model.UserManager;
  *
  */
 public class LoginFragment extends BaseFragment {
+	@Inject
+	UserManager userM;
 
 	public static final String EXTRA_USERNAME = "com.keyconsultant.parse.logintutorial.activity.extra.USERNAME";
     public static final String EXTRA_PASSWORD = "com.keyconsultant.parse.logintutorial.activity.extra.PASSWORD";
@@ -135,8 +139,8 @@ public class LoginFragment extends BaseFragment {
             focusView.requestFocus();
         } else {
             // perform the user login attempt.
-        	((BaseApplication) getActivity().getApplication()).inject(UserManager.getInstance());
-            UserManager.getInstance().authenticate(username.toLowerCase(Locale.getDefault()), password);
+        	((BaseApplication) getActivity().getApplication()).inject(userM);
+            userM.authenticate(username.toLowerCase(Locale.getDefault()), password);
         }
     }
 

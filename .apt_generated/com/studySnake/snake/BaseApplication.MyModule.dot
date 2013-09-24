@@ -3,4 +3,10 @@ digraph G1 {
   BaseActivity -> Bus;
   BaseFragment -> Bus;
   BaseManager -> Bus;
+  n2 [label="com.studySnake.snake.model.UserManager"];
+  CreateAccountFragment -> n2;
+  ForgotPasswordDialogFragment -> n2;
+  LoginFragment -> n2;
+  n3 [label="members/com.studySnake.snake.model.UserManager"];
+  n3 -> Bus;
 }
